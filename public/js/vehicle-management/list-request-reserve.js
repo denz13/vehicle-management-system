@@ -469,3 +469,61 @@ window.viewReservationDetails = viewReservationDetails;
 window.loadReservationDetails = loadReservationDetails;
 window.populateDetailsModal = populateDetailsModal;
 window.showDetailsErrorMessage = showDetailsErrorMessage;
+
+// Filter functionality for dropdown
+function applyFilters(status = null) {
+    const tableBody = document.getElementById('reservations-table-body');
+    const rows = tableBody.querySelectorAll('tr');
+    let visibleCount = 0;
+    
+    console.log('Filtering by status:', status);
+    console.log('Total rows found:', rows.length);
+    
+    rows.forEach((row, index) => {
+        let shouldShow = true;
+        
+        if (status && status !== 'all') {
+            // Find the status cell (7th column - STATUS column)
+            const statusCell = row.querySelector('td:nth-child(7)');
+            if (statusCell) {
+                const statusText = statusCell.textContent.toLowerCase();
+                console.log(`Row ${index + 1} status:`, statusText);
+                
+                if (!statusText.includes(status.toLowerCase())) {
+                    shouldShow = false;
+                    console.log(`Row ${index + 1} hidden - status doesn't match`);
+                }
+            } else {
+                console.log(`Row ${index + 1} - no status cell found`);
+            }
+        }
+        
+        if (shouldShow) {
+            row.style.display = '';
+            visibleCount++;
+            console.log(`Row ${index + 1} shown`);
+        } else {
+            row.style.display = 'none';
+            console.log(`Row ${index + 1} hidden`);
+        }
+    });
+    
+    console.log('Total visible rows:', visibleCount);
+    
+    // Update the count display
+    updateFilteredCount(visibleCount, status);
+}
+
+function updateFilteredCount(visibleCount, status) {
+    const countElement = document.querySelector('.intro-y.col-span-12 .hidden.md\\:block.mx-auto.text-slate-500');
+    if (countElement) {
+        if (status && status !== 'all') {
+            countElement.textContent = `Showing ${visibleCount} ${status} reservations`;
+        } else {
+            countElement.textContent = `Showing ${visibleCount} reservations`;
+        }
+    }
+}
+
+// Export filter function for global access
+window.applyFilters = applyFilters;

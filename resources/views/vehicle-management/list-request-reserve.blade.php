@@ -59,7 +59,63 @@
 <!-- BEGIN: Vehicle Reservations Status -->
 <div class="grid grid-cols-12 gap-6 mt-5">
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-        <button class="btn btn-primary shadow-md mr-2" data-tw-toggle="modal" data-tw-target="#filter-modal">Filter</button>
+        <div class="dropdown">
+            <button class="dropdown-toggle btn btn-primary shadow-md mr-2" aria-expanded="false" data-tw-toggle="dropdown">
+                <span class="flex items-center">
+                    <i data-lucide="filter" class="w-4 h-4 mr-2"></i> Filter
+                </span>
+            </button>
+            <div class="dropdown-menu w-40">
+                <ul class="dropdown-content">
+                    <li>
+                        <a href="javascript:;" class="dropdown-item" onclick="applyFilters()">All Statuses</a>
+                    </li>
+                    @foreach($uniqueStatuses as $status)
+                        <li>
+                            <a href="javascript:;" class="dropdown-item" onclick="applyFilters('{{ $status }}')">
+                                @switch($status)
+                                    @case('pending')
+                                        <span class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock w-4 h-4 mr-2 text-warning"><circle cx="12" cy="12" r="10"></circle><polyline points="12,6 12,12 16,14"></polyline></svg>
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                        @break
+                                    @case('approved')
+                                        <span class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle w-4 h-4 mr-2 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                        @break
+                                    @case('rejected')
+                                        <span class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle w-4 h-4 mr-2 text-danger"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                        @break
+                                    @case('completed')
+                                        <span class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-square w-4 h-4 mr-2 text-info"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                        @break
+                                    @case('cancelled')
+                                        <span class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-4 h-4 mr-2 text-slate-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                        @break
+                                    @default
+                                        <span class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle w-4 h-4 mr-2 text-slate-400"><circle cx="12" cy="12" r="10"></circle></svg>
+                                            {{ ucfirst($status) }}
+                                        </span>
+                                @endswitch
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
         <div class="hidden md:block mx-auto text-slate-500">
             @if($reservations->count() > 0)
                 Showing {{ $reservations->count() }} reservations
@@ -433,6 +489,7 @@
     </div>
 </div>
 <!-- END: View Details Modal -->
+
 @endsection
 
 @push('scripts')
