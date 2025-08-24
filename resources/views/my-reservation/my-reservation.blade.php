@@ -373,6 +373,30 @@
     position="right" 
     gravity="top" 
 />
+
+<x-notification-toast 
+    id="validation_error" 
+    type="error" 
+    title="Validation Error!" 
+    message="Please check the form for errors" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="5000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="update_success" 
+    type="success" 
+    title="Success!" 
+    message="Reservation updated successfully" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="3000" 
+    position="right" 
+    gravity="top" 
+/>
 <!-- END: Notification Toasts -->
 @endsection
 
