@@ -102,10 +102,18 @@ class MyReservationController extends Controller
             $user = Auth::user();
             
             // Find the reservation and ensure it belongs to the current user
-            $reservation = tbl_reserve_vehicle::with(['vehicle', 'reservation_type', 'passengers'])
+            $reservation = tbl_reserve_vehicle::with(['vehicle', 'reservation_type'])
                 ->where('id', $id)
                 ->where('user_id', $user->id)
                 ->first();
+            
+            // Load passengers separately to handle soft-deleted records
+            if ($reservation) {
+                $passengers = tbl_reserve_vehicle_passenger::where('reserve_vehicle_id', $id)
+                    ->whereNull('deleted_at') // Only active passengers
+                    ->get();
+                $reservation->passengers = $passengers;
+            }
             
             if (!$reservation) {
                 return response()->json([
@@ -128,8 +136,28 @@ class MyReservationController extends Controller
                 'destination' => $reservation->destination,
                 'driver' => $reservation->driver,
                 'passengers_count' => $reservation->passengers ? $reservation->passengers->count() : 0,
-                'passengers_data' => $reservation->passengers ? $reservation->passengers->toArray() : []
+                'passengers_data' => $reservation->passengers ? $reservation->passengers->toArray() : [],
+                'passengers_relationship_loaded' => $reservation->relationLoaded('passengers')
             ]);
+            
+            // Debug: Log passenger structure
+            if ($reservation->passengers && $reservation->passengers->count() > 0) {
+                \Log::info('First passenger structure:', [
+                    'first_passenger' => $reservation->passengers->first()->toArray(),
+                    'passenger_keys' => array_keys($reservation->passengers->first()->toArray())
+                ]);
+            }
+            
+            // Add driver_user_id to the reservation data for frontend
+            // If driver field contains a user ID, use it directly
+            // If it contains a name, find the user ID
+            if (is_numeric($reservation->driver)) {
+                $reservation->driver_user_id = $reservation->driver;
+            } else {
+                // Find user by name (fallback for existing data)
+                $driverUser = User::where('name', $reservation->driver)->first();
+                $reservation->driver_user_id = $driverUser ? $driverUser->id : null;
+            }
             
             return response()->json([
                 'success' => true,
@@ -149,10 +177,29 @@ class MyReservationController extends Controller
         try {
             $user = Auth::user();
             
+            // Debug: Log the incoming request data
+            \Log::info('Update request data:', $request->all());
+            
+            // Early debug to see if we reach this point
+            \Log::info('REACHED UPDATE METHOD - ID: ' . $id . ', User ID: ' . $user->id);
+            
             // Find the reservation and ensure it belongs to the current user
             $reservation = tbl_reserve_vehicle::where('id', $id)
                 ->where('user_id', $user->id)
                 ->first();
+            
+            // Debug: Check if reservation was found
+            \Log::info('Reservation lookup successful', [
+                'reservation_id' => $reservation->id,
+                'status' => $reservation->status,
+                'user_id' => $reservation->user_id
+            ]);
+            
+            // Debug: Check validation process
+            \Log::info('About to validate request data', [
+                'request_fields' => array_keys($request->all()),
+                'request_data' => $request->all()
+            ]);
             
             if (!$reservation) {
                 return response()->json([
@@ -169,56 +216,184 @@ class MyReservationController extends Controller
                 ], 422);
             }
             
-            // Validate request
-            $request->validate([
-                'destination' => 'required|string|max:255',
-                'longitude' => 'nullable|string|max:50',
-                'latitude' => 'nullable|string|max:50',
-                'driver' => 'required|exists:users,id',
-                'start_datetime' => 'required|date|after:now',
-                'end_datetime' => 'required|date|after:start_datetime',
-                'reason' => 'required|string|max:500',
-                'reservation_type_id' => 'required|integer|min:1',
-                'passengers' => 'required|array|min:1',
-                'passengers.*' => 'required|exists:users,id'
-            ]);
-            
-            // Get driver user name
-            $driverUser = User::find($request->driver);
-            if (!$driverUser) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Selected driver not found.'
-                ], 422);
+            // Validate request - make fields optional for partial updates
+            try {
+                $request->validate([
+                    'destination' => 'nullable|string|max:255',
+                    'longitude' => 'nullable|string|max:50',
+                    'latitude' => 'nullable|string|max:50',
+                    'driver' => 'nullable|exists:users,id',
+                    'start_datetime' => 'nullable|date',
+                    'end_datetime' => 'nullable|date',
+                    'reason' => 'nullable|string|max:500',
+                    'reservation_type_id' => 'nullable|integer|min:1',
+                    'passengers' => 'nullable|array|min:1',
+                    'passengers.*' => 'nullable|exists:users,id'
+                ]);
+                
+                // Additional validation for datetime fields if both are provided
+                if ($request->filled('start_datetime') && $request->filled('end_datetime')) {
+                    $request->validate([
+                        'end_datetime' => 'after:start_datetime'
+                    ]);
+                }
+                
+                \Log::info('Validation passed successfully');
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                \Log::error('Validation failed:', [
+                    'errors' => $e->errors(),
+                    'request_data' => $request->all()
+                ]);
+                
+                // Log validation errors and re-throw
+                \Log::error('Validation failed:', [
+                    'errors' => $e->errors(),
+                    'request_data' => $request->all()
+                ]);
+                throw $e;
             }
             
-            // Update reservation
-            $reservation->update([
-                'destination' => $request->destination,
-                'longitude' => $request->longitude,
-                'latitude' => $request->latitude,
-                'driver' => $driverUser->name,
-                'start_datetime' => $request->start_datetime,
-                'end_datetime' => $request->end_datetime,
-                'reason' => $request->reason,
-                'reservation_type_id' => $request->reservation_type_id
+            // Prepare update data - only include fields that are actually different
+            $updateData = [];
+            
+            if ($request->filled('destination') && $request->destination !== $reservation->destination) {
+                $updateData['destination'] = $request->destination;
+            }
+            if ($request->filled('longitude') && $request->longitude !== $reservation->longitude) {
+                $updateData['longitude'] = $request->longitude;
+            }
+            if ($request->filled('latitude') && $request->latitude !== $reservation->latitude) {
+                $updateData['latitude'] = $request->latitude;
+            }
+            if ($request->filled('driver') && $request->driver !== $reservation->driver_user_id) {
+                $driverUser = User::find($request->driver);
+                if (!$driverUser) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selected driver not found.'
+                    ], 422);
+                }
+                // Save the driver ID to driver_user_id field and name to driver field
+                $updateData['driver_user_id'] = $request->driver; // This is the user ID
+                $updateData['driver'] = $driverUser->name; // This is the driver's name
+            }
+            if ($request->filled('start_datetime') && $request->start_datetime !== $reservation->start_datetime) {
+                // Convert ISO format (2025-08-24T18:31) to MySQL format (2025-08-24 18:31:00)
+                $startDateTime = \Carbon\Carbon::parse($request->start_datetime)->format('Y-m-d H:i:s');
+                $updateData['start_datetime'] = $startDateTime;
+            }
+            if ($request->filled('end_datetime') && $request->end_datetime !== $reservation->end_datetime) {
+                // Convert ISO format (2025-08-24T18:31) to MySQL format (2025-08-24 18:31:00)
+                $endDateTime = \Carbon\Carbon::parse($request->end_datetime)->format('Y-m-d H:i:s');
+                $updateData['end_datetime'] = $endDateTime;
+            }
+            if ($request->filled('reason') && $request->reason !== $reservation->reason) {
+                $updateData['reason'] = $request->reason;
+            }
+            if ($request->filled('reservation_type_id') && $request->reservation_type_id != $reservation->reservation_type_id) {
+                $updateData['reservation_type_id'] = $request->reservation_type_id;
+            }
+            
+            // Generate new QR code file for the updated reservation
+            $qrCodeData = [
+                'reservation_id' => $reservation->id,
+                'vehicle_id' => $reservation->vehicle_id,
+                'user_id' => $reservation->user_id,
+                'driver_id' => $request->filled('driver') ? $request->driver : $reservation->driver_user_id,
+                'destination' => $request->filled('destination') ? $request->destination : $reservation->destination,
+                'longitude' => $request->filled('longitude') ? $request->longitude : $reservation->longitude,
+                'latitude' => $request->filled('latitude') ? $request->latitude : $reservation->latitude,
+                'start_datetime' => $request->filled('start_datetime') ? $request->start_datetime : $reservation->start_datetime,
+                'end_datetime' => $request->filled('end_datetime') ? $request->end_datetime : $reservation->end_datetime,
+                'reason' => $request->filled('reason') ? $request->reason : $reservation->reason,
+                'reservation_type_id' => $request->filled('reservation_type_id') ? $request->reservation_type_id : $reservation->reservation_type_id,
+                'passengers' => $request->has('passengers') ? $request->passengers : [],
+                'updated_at' => now()->toISOString()
+            ];
+            
+            // Generate QR code file and get the path
+            $qrCodePath = $this->generateQRCode($qrCodeData);
+            if ($qrCodePath) {
+                $updateData['qrcode'] = $qrCodePath;
+            }
+            
+            // Debug: Show what data will be updated
+            \Log::info('Update data to be saved:', $updateData);
+            
+            // Log update data for debugging
+            \Log::info('Update data prepared successfully', [
+                'reservation_id' => $reservation->id,
+                'update_data_count' => count($updateData),
+                'update_fields' => array_keys($updateData),
+                'fields_to_update' => $updateData
             ]);
             
-            // Update passengers
-            if ($request->has('passengers')) {
-                // Remove existing passengers
-                tbl_reserve_vehicle_passenger::where('reserve_vehicle_id', $id)->delete();
-                
-                // Add new passengers (remove duplicates)
-                $uniquePassengers = array_unique(array_filter($request->passengers, function($passengerId) {
-                    return !empty($passengerId);
-                }));
-                
-                foreach ($uniquePassengers as $passengerId) {
-                    tbl_reserve_vehicle_passenger::create([
-                        'reserve_vehicle_id' => $id,
-                        'user_id' => $passengerId
+            // Log what will be updated
+            \Log::info('Smart update - only changing fields:', [
+                'fields_to_update' => array_keys($updateData),
+                'update_count' => count($updateData)
+            ]);
+            
+            // Update reservation only if there are fields to update
+            if (!empty($updateData)) {
+                try {
+                    // Log what we're about to save
+                    \Log::info('About to save update data:', [
+                        'fields_to_update' => array_keys($updateData),
+                        'update_count' => count($updateData)
                     ]);
+                    
+                    // Use individual field assignment since guarded: ["*"] prevents fill()
+                    foreach ($updateData as $field => $value) {
+                        $reservation->$field = $value;
+                    }
+                    $result = $reservation->save();
+                    
+                    \Log::info('Update result:', [
+                        'success' => $result, 
+                        'updated_data' => $updateData,
+                        'model_changes' => $reservation->getChanges()
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('Update failed:', [
+                        'error' => $e->getMessage(), 
+                        'trace' => $e->getTraceAsString(),
+                        'update_data' => $updateData
+                    ]);
+                    throw $e;
+                }
+            }
+            
+            // Update passengers only if provided
+            if ($request->has('passengers') && is_array($request->passengers)) {
+                try {
+                    // Soft delete existing passengers (mark as deleted)
+                    tbl_reserve_vehicle_passenger::where('reserve_vehicle_id', $id)
+                        ->update(['deleted_at' => now()]);
+                    
+                    // Add new passengers (remove duplicates and empty values)
+                    $uniquePassengers = array_unique(array_filter($request->passengers, function($passengerId) {
+                        return !empty($passengerId);
+                    }));
+                    
+                    if (!empty($uniquePassengers)) {
+                        foreach ($uniquePassengers as $passengerId) {
+                            // Get user name for the passenger
+                            $passengerUser = User::find($passengerId);
+                            if ($passengerUser) {
+                                tbl_reserve_vehicle_passenger::create([
+                                    'reserve_vehicle_id' => $id,
+                                    'passenger_id' => $passengerId,
+                                    'passenger_name' => $passengerUser->name ?? 'Unknown Passenger',
+                                    'status' => 'active'
+                                ]);
+                            }
+                        }
+                    }
+                    \Log::info('Passengers updated successfully:', ['passengers' => $uniquePassengers]);
+                } catch (\Exception $e) {
+                    \Log::error('Passenger update failed:', ['error' => $e->getMessage()]);
+                    throw $e;
                 }
             }
             
@@ -228,10 +403,93 @@ class MyReservationController extends Controller
             ]);
             
         } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Reservation update failed:', [
+                'reservation_id' => $id,
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update reservation. Please try again.'
             ], 500);
+        }
+    }
+    
+    // Generate QR code for reservation (copied from ReserveVehicleController)
+    private function generateQRCode($reservationData = null)
+    {
+        try {
+            if ($reservationData) {
+                // Create QR code content with reservation details
+                $qrContent = json_encode([
+                    'type' => 'vehicle_reservation',
+                    'reservation_id' => $reservationData['reservation_id'] ?? 'N/A',
+                    'vehicle_id' => $reservationData['vehicle_id'] ?? 'N/A',
+                    'user_id' => $reservationData['user_id'] ?? 'N/A',
+                    'driver_id' => $reservationData['driver_id'] ?? 'N/A',
+                    'destination' => $reservationData['destination'] ?? 'N/A',
+                    'longitude' => $reservationData['longitude'] ?? 'N/A',
+                    'latitude' => $reservationData['latitude'] ?? 'N/A',
+                    'start_datetime' => $reservationData['start_datetime'] ?? 'N/A',
+                    'end_datetime' => $reservationData['end_datetime'] ?? 'N/A',
+                    'reason' => $reservationData['reason'] ?? 'N/A',
+                    'reservation_type_id' => $reservationData['reservation_type_id'] ?? 'N/A',
+                    'passengers' => $reservationData['passengers'] ?? [],
+                    'timestamp' => now()->toISOString()
+                ]);
+            } else {
+                // Fallback content
+                $qrContent = json_encode([
+                    'type' => 'vehicle_reservation',
+                    'timestamp' => now()->toISOString()
+                ]);
+            }
+            
+            // Generate unique filename
+            $filename = 'qr_' . time() . '_' . uniqid() . '.png';
+            
+            // Store QR code in storage
+            $qrPath = 'qrcodes/' . $filename;
+            
+            // Generate actual QR code PNG using Endroid library
+            if (class_exists('\Endroid\QrCode\QrCode')) {
+                try {
+                    $qrCode = new \Endroid\QrCode\QrCode($qrContent);
+                    
+                    // Create writer for PNG format
+                    $writer = new \Endroid\QrCode\Writer\PngWriter();
+                    
+                    // Create result with default settings
+                    $result = $writer->write($qrCode);
+                    
+                    // Get PNG data
+                    $pngData = $result->getString();
+                    
+                    // Save PNG to storage
+                    \Storage::disk('public')->put($qrPath, $pngData);
+                    
+                    \Log::info('QR Code generated successfully using Endroid library');
+                } catch (\Exception $e) {
+                    \Log::error('Endroid QR Code generation failed: ' . $e->getMessage());
+                    // Fallback to text file
+                    \Storage::disk('public')->put($qrPath, $qrContent);
+                    \Log::info('QR Code generated as text file (Endroid failed)');
+                }
+            } else {
+                // Fallback: create text file if library not available
+                \Storage::disk('public')->put($qrPath, $qrContent);
+                \Log::info('QR Code generated as text file (Endroid library not available)');
+            }
+            
+            return $qrPath;
+            
+        } catch (\Exception $e) {
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
+            return null;
         }
     }
 }
