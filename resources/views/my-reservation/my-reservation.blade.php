@@ -175,90 +175,108 @@
                 </div>
                 
                 <div id="details-content" class="hidden">
-                    <!-- Vehicle Information -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3">Vehicle Information</h3>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center">
-                                <div id="details-vehicle-image" class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4">
-                                    <!-- Vehicle image will be populated here -->
-                                </div>
-                                <div>
-                                    <div id="details-vehicle-name" class="text-lg font-medium text-gray-900"></div>
-                                    <div id="details-plate-number" class="text-sm text-gray-500"></div>
-                                </div>
+                    <div class="intro-y box overflow-hidden">
+                        <div class="flex flex-col lg:flex-row pt-10 px-10 sm:px-10 sm:pt-10 lg:pb-10 text-center sm:text-left">
+                            <div>
+                                <div class="font-semibold text-primary text-3xl">RESERVATION</div>
+                                <div class="mt-4" id="details-qrcode">
+                                     <div class="w-32 h-32 mx-auto">QR Code</div>
+                                 </div>
+                            </div>
+                            <div class="mt-20 lg:mt-0 lg:ml-auto lg:text-right">
+                                <div class="text-xl text-primary font-medium" id="details-vehicle-name">Vehicle Name</div>
+                                <div class="mt-1" id="details-plate-number">Plate Number</div>
+                                <div class="mt-1" id="details-reservation-type">Reservation Type</div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Reservation Details -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3">Reservation Details</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div class="flex flex-col lg:flex-row border-b px-5 sm:px-10 pt-0 pb-10 sm:pb-20 text-center sm:text-left">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-                                <div id="details-destination" class="text-gray-900"></div>
+                                <div class="text-base text-slate-500">Reservation Details</div>
+                                <div class="text-lg font-medium text-primary mt-2" id="details-destination">Destination</div>
+                                <div class="mt-1">Driver: <span id="details-driver">Driver Name</span></div>
+                                <div class="mt-1">Requested By: <span id="details-requested-by">User Name</span></div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Driver</label>
-                                <div id="details-driver" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date & Time</label>
-                                <div id="details-start-datetime" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">End Date & Time</label>
-                                <div id="details-end-datetime" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-                                <div id="details-reason" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Reservation Type</label>
-                                <div id="details-reservation-type" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <div id="details-status" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Requested By</label>
-                                <div id="details-requested-by" class="text-gray-900"></div>
+                            <div class="mt-10 lg:mt-0 lg:ml-auto lg:text-right">
+                                <div class="text-base text-slate-500">Reservation ID</div>
+                                <div class="text-lg text-primary font-medium mt-2" id="details-reservation-id">#0000</div>
+                                <div class="mt-1" id="details-status">Status</div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Passengers -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3">Passengers</h3>
-                        <div id="details-passengers" class="bg-gray-50 rounded-lg p-4">
-                            <!-- Passengers will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- QR Code -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3">QR Code</h3>
-                        <div class="bg-gray-50 rounded-lg p-4 text-center">
-                            <div id="details-qrcode" class="flex justify-center">
-                                <!-- QR code will be populated here -->
+                        
+                        <div class="px-5 sm:px-16 py-10 sm:py-20">
+                            <div class="overflow-x-auto">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">DESCRIPTION</th>
+                                            <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">DETAILS</th>
+                                            <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">DATE & TIME</th>
+                                            <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">STATUS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border-b dark:border-darkmode-400">
+                                                <div class="font-medium whitespace-nowrap">Start Date & Time</div>
+                                                <div class="text-slate-500 text-sm mt-0.5 whitespace-nowrap">Reservation begins</div>
+                                            </td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32">-</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-start-datetime">Start Time</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32 font-medium" id="details-start-status">Scheduled</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-b dark:border-darkmode-400">
+                                                <div class="font-medium whitespace-nowrap">End Date & Time</div>
+                                                <div class="text-slate-500 text-sm mt-0.5 whitespace-nowrap">Reservation ends</div>
+                                            </td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32">-</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-end-datetime">End Time</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32 font-medium" id="details-end-status">Scheduled</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-b dark:border-darkmode-400">
+                                                <div class="font-medium whitespace-nowrap">Purpose/Reason</div>
+                                                <div class="text-slate-500 text-sm mt-0.5 whitespace-nowrap">Trip purpose</div>
+                                            </td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-reason-details">Reason</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-reason">Reason</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32 font-medium">Active</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="font-medium whitespace-nowrap">Location Coordinates</div>
+                                                <div class="text-slate-500 text-sm mt-0.5 whitespace-nowrap">GPS coordinates</div>
+                                            </td>
+                                            <td class="text-right w-32">-</td>
+                                            <td class="text-right w-32">
+                                                <div id="details-longitude">Longitude</div>
+                                                <div id="details-latitude">Latitude</div>
+                                            </td>
+                                            <td class="text-right w-32 font-medium">Set</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Coordinates -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3">Location Coordinates</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
-                                <div id="details-longitude" class="text-gray-900"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
-                                <div id="details-latitude" class="text-gray-900"></div>
+                        
+                        <div class="px-5 sm:px-16 py-0 sm:py-0">
+                            <div class="overflow-x-auto">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">PASSENGER NAME</th>
+                                            <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">ROLE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="details-passengers-table">
+                                        <tr>
+                                            <td class="border-b dark:border-darkmode-400 text-center py-4" colspan="3">
+                                                <div class="text-slate-500">No passengers assigned</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

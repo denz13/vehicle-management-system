@@ -313,27 +313,25 @@ function loadReservationDetails(reservationId) {
 // Populate the details modal with reservation data
 function populateDetailsModal(reservation) {
     // Vehicle Information
-    const vehicleImage = document.getElementById('details-vehicle-image');
     const vehicleName = document.getElementById('details-vehicle-name');
     const plateNumber = document.getElementById('details-plate-number');
-    
-    if (vehicleImage) {
-        if (reservation.vehicle.vehicle_image) {
-            vehicleImage.innerHTML = `<img src="/storage/vehicles/${reservation.vehicle.vehicle_image}" alt="${reservation.vehicle.vehicle_name}" class="w-full h-full object-cover rounded-full">`;
-        } else {
-            vehicleImage.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21,15 16,10 5,21"></polyline></svg>`;
-        }
-    }
+    const reservationType = document.getElementById('details-reservation-type');
     
     if (vehicleName) vehicleName.textContent = reservation.vehicle.vehicle_name;
     if (plateNumber) plateNumber.textContent = reservation.vehicle.plate_number;
+    if (reservationType) reservationType.textContent = reservation.reservation_type.reservation_name;
     
     // Reservation Details
     if (document.getElementById('details-destination')) document.getElementById('details-destination').textContent = reservation.destination;
     if (document.getElementById('details-driver')) document.getElementById('details-driver').textContent = reservation.driver;
     if (document.getElementById('details-reason')) document.getElementById('details-reason').textContent = reservation.reason;
-    if (document.getElementById('details-reservation-type')) document.getElementById('details-reservation-type').textContent = reservation.reservation_type.reservation_name;
+    if (document.getElementById('details-reason-details')) document.getElementById('details-reason-details').textContent = reservation.reason;
     if (document.getElementById('details-requested-by')) document.getElementById('details-requested-by').textContent = reservation.requested_by;
+    
+    // Reservation ID
+    if (document.getElementById('details-reservation-id')) {
+        document.getElementById('details-reservation-id').textContent = `#${reservation.id}`;
+    }
     
     // Format and display dates
     if (document.getElementById('details-start-datetime')) {
@@ -390,29 +388,32 @@ function populateDetailsModal(reservation) {
     }
     
     // Passengers
-    const passengersContainer = document.getElementById('details-passengers');
-    if (passengersContainer) {
+    const passengersTable = document.getElementById('details-passengers-table');
+    
+    if (passengersTable) {
         if (reservation.passengers && reservation.passengers.length > 0) {
-            let passengersHtml = '';
-            reservation.passengers.forEach(passenger => {
-                passengersHtml += `
-                    <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
+            const passengersRows = reservation.passengers.map(passenger => {
+                return `<tr class="border-b dark:border-darkmode-400">
+                    <td class="py-3 px-4">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-900">${passenger.name}</div>
-                                <div class="text-sm text-gray-500">Passenger</div>
-                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-slate-400 mr-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <span class="font-medium">${passenger.name}</span>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${passenger.status}</span>
-                    </div>
-                `;
-            });
-            passengersContainer.innerHTML = passengersHtml;
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded">Passenger</span>
+                    </td>
+                    
+                </tr>`;
+            }).join('');
+            
+            passengersTable.innerHTML = passengersRows;
         } else {
-            passengersContainer.innerHTML = '<div class="text-center py-4 text-gray-500">No passengers assigned</div>';
+            passengersTable.innerHTML = `<tr>
+                <td class="border-b dark:border-darkmode-400 text-center py-4" colspan="3">
+                    <div class="text-slate-500">No passengers assigned</div>
+                </td>
+            </tr>`;
         }
     }
     
@@ -422,7 +423,7 @@ function populateDetailsModal(reservation) {
         if (reservation.qrcode) {
             // Check if it's a file path (starts with 'qrcodes/')
             if (reservation.qrcode.startsWith('qrcodes/')) {
-                qrcodeContainer.innerHTML = `<img src="/storage/${reservation.qrcode}" alt="QR Code" class="w-32 h-32">`;
+                qrcodeContainer.innerHTML = `<img src="/storage/${reservation.qrcode}" alt="QR Code" class="w-40 h-40">`;
             } else {
                 // If it's JSON data, show a placeholder or generate QR code
                 qrcodeContainer.innerHTML = '<div class="text-gray-500">QR Code data available</div>';
