@@ -620,10 +620,8 @@ function submitUpdateForm() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Show success message
-                if (typeof showNotification_success !== 'undefined') {
-                    showNotification_success();
-                }
+                // Show success message using notification helper
+                showUpdateSuccessMessage(data.message || 'Reservation updated successfully!');
                 
                 // Close modal using Tailwind modal system
                 const modal = document.getElementById('update-reservation-modal');
@@ -635,22 +633,18 @@ function submitUpdateForm() {
                     }
                 }
                 
-                // Refresh the page to show updated data
-                location.reload();
+                // Delay page reload to allow notification toast to be visible
+                setTimeout(() => {
+                    location.reload();
+                }, 2000); // 2 second delay
             } else {
-                // Show error message
-                if (typeof showNotification_error !== 'undefined') {
-                    showNotification_error();
-                }
-                alert(data.message || 'Failed to update reservation');
+                // Show error message using notification helper
+                showErrorMessage(data.message || 'Failed to update reservation');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            if (typeof showNotification_error !== 'undefined') {
-                showNotification_error();
-            }
-            alert('An error occurred while updating the reservation');
+            showErrorMessage('An error occurred while updating the reservation');
         })
         .finally(() => {
             // Reset button state
@@ -746,40 +740,34 @@ function performCancelReservation(reservationId) {
         }
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Show success message
-            if (typeof showNotification_cancel_success !== 'undefined') {
-                showNotification_cancel_success();
-            }
-            
-            // Close modal using Tailwind modal system
-            const modal = document.getElementById('cancel-confirmation-modal');
-            if (modal) {
-                // Find and click the close button
-                const closeButton = modal.querySelector('[data-tw-dismiss="modal"]');
-                if (closeButton) {
-                    closeButton.click();
+            .then(data => {
+            if (data.success) {
+                // Show success message using notification helper
+                showCancelSuccessMessage(data.message || 'Reservation cancelled successfully!');
+                
+                // Close modal using Tailwind modal system
+                const modal = document.getElementById('cancel-confirmation-modal');
+                if (modal) {
+                    // Find and click the close button
+                    const closeButton = modal.querySelector('[data-tw-dismiss="modal"]');
+                    if (closeButton) {
+                        closeButton.click();
+                    }
                 }
+                
+                // Delay page reload to allow notification toast to be visible
+                setTimeout(() => {
+                    location.reload();
+                }, 2000); // 2 second delay
+            } else {
+                // Show error message using notification helper
+                showErrorMessage(data.message || 'Failed to cancel reservation');
             }
-            
-            // Refresh the page to show updated status
-            location.reload();
-        } else {
-            // Show error message
-            if (typeof showNotification_error !== 'undefined') {
-                showNotification_error();
-            }
-            alert(data.message || 'Failed to cancel reservation');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        if (typeof showNotification_error !== 'undefined') {
-            showNotification_error();
-        }
-        alert('An error occurred while cancelling the reservation');
-    })
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorMessage('An error occurred while cancelling the reservation');
+        })
     .finally(() => {
         // Reset button state
         confirmBtn.textContent = originalText;
@@ -1150,5 +1138,60 @@ function reverseGeocode(lat, lng) {
                 document.getElementById('update_destination').value = address;
             }
         });
+    }
+}
+
+// Notification helper functions (matching vehicle management pattern)
+function showSuccessMessage(message) {
+    if (typeof showNotification_success !== 'undefined') {
+        showNotification_success();
+    } else {
+        // Fallback to console if notification system not available
+        console.log('Success:', message);
+    }
+}
+
+function showErrorMessage(message) {
+    if (typeof showNotification_error !== 'undefined') {
+        showNotification_error();
+    } else {
+        // Fallback to console if notification system not available
+        console.log('Error:', message);
+    }
+}
+
+function showValidationErrorMessage() {
+    if (typeof showNotification_validation_error !== 'undefined') {
+        showNotification_validation_error();
+    } else if (typeof showNotification_error !== 'undefined') {
+        // Fallback to general error notification
+        showNotification_error();
+    } else {
+        // Fallback to console if notification system not available
+        console.log('Validation Error: Please check the form for errors');
+    }
+}
+
+function showUpdateSuccessMessage(message) {
+    if (typeof showNotification_update_success !== 'undefined') {
+        showNotification_update_success();
+    } else if (typeof showNotification_success !== 'undefined') {
+        // Fallback to general success notification
+        showNotification_success();
+    } else {
+        // Fallback to console if notification system not available
+        console.log('Success:', message);
+    }
+}
+
+function showCancelSuccessMessage(message) {
+    if (typeof showNotification_cancel_success !== 'undefined') {
+        showNotification_cancel_success();
+    } else if (typeof showNotification_success !== 'undefined') {
+        // Fallback to general success notification
+        showNotification_success();
+    } else {
+        // Fallback to console if notification system not available
+        console.log('Success:', message);
     }
 }
