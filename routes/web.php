@@ -9,6 +9,7 @@ use App\Http\Controllers\DepartmentManagement\DepartmentManagementController;
 use App\Http\Controllers\VehicleManagement\VehicleManagementController;
 use App\Http\Controllers\ReserveVehicle\ReserveVehicleController;
 use App\Http\Controllers\MyReservation\MyReservationController;
+use App\Http\Controllers\vehiclemanagement\ListRequestReserveController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -111,5 +112,15 @@ Route::middleware('auth')->group(function() {
     Route::post('my-reservation/{id}', [MyReservationController::class, 'update'])->name('my-reservation.update');
     Route::delete('my-reservation/{id}', [MyReservationController::class, 'destroy'])->name('my-reservation.destroy');
     Route::post('my-reservation/{id}/cancel', [MyReservationController::class, 'cancelReservation'])->name('my-reservation.cancel');
+
+    // list request reserve
+    Route::get('list-request-reserve', [ListRequestReserveController::class, 'index'])->name('list-request-reserve');
+    Route::get('list-request-reserve/reservations', [ListRequestReserveController::class, 'getReservations'])->name('list-request-reserve.reservations');
+    Route::get('list-request-reserve/data', [ListRequestReserveController::class, 'getReservations'])->name('list-request-reserve.data');
+    Route::get('list-request-reserve/{id}', [ListRequestReserveController::class, 'show'])->name('list-request-reserve.show');
+    Route::post('list-request-reserve', [ListRequestReserveController::class, 'store'])->name('list-request-reserve.store');
+    Route::get('list-request-reserve/{id}/edit', [ListRequestReserveController::class, 'edit'])->name('list-request-reserve.edit');
+    Route::put('list-request-reserve/{id}', [ListRequestReserveController::class, 'update'])->name('list-request-reserve.update');
+    Route::delete('list-request-reserve/{id}', [ListRequestReserveController::class, 'destroy'])->name('list-request-reserve.destroy');
 });
 
