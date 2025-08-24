@@ -1,15 +1,21 @@
+<!-- BEGIN: Side Menu -->
 <nav class="side-nav">
     <ul>
         <li>
             <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__icon"> <i data-lucide="home"></i> </div>
                 <div class="side-menu__title">
                     Dashboard 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                 </div>
             </a>
             <ul class="">
-                <x-menu.sidebar-single-item key="dashboard" href="{{ url('dashboard') }}" icon="home" text="{{ __('Dashboard') }}" />
+                <li>
+                    <a href="{{ route('dashboard') }}" class="side-menu">
+                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                        <div class="side-menu__title"> Dashboard </div>
+                    </a>
+                </li>
                 <li>
                     <a href="simple-menu-light-dashboard-overview-1.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
@@ -25,18 +31,57 @@
             </ul>
         </li>
         <li>
-            <a href="{{ route('chatify') }}" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="message-circle"></i> </div>
-                <div class="side-menu__title"> Message </div>
+            <a href="javascript:;" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__title">
+                    Position Management 
+                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                </div>
             </a>
+            <ul class="">
+                <li>
+                    <a href="{{ route('position-management') }}" class="side-menu">
+                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                        <div class="side-menu__title"> Create Position </div>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li>
-            <a href="{{ route('feedback.index') }}" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
-                <div class="side-menu__title"> Feedback </div>
+            <a href="javascript:;" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__title">
+                    Department Management 
+                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                </div>
             </a>
+            <ul class="">
+                <li>
+                    <a href="{{ route('department-management') }}" class="side-menu">
+                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                        <div class="side-menu__title"> Create Department </div>
+                    </a>
+                </li>
+            </ul>
         </li>
-        {{-- <li>
+        <li>
+            <a href="javascript:;" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__title">
+                    Vehicle Management 
+                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                </div>
+            </a>
+            <ul class="">
+                <li>
+                    <a href="{{ route('vehicle-management') }}" class="side-menu">
+                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                        <div class="side-menu__title"> Create Vehicle </div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                 <div class="side-menu__title">
@@ -133,8 +178,43 @@
                     </a>
                 </li>
             </ul>
-        </li> --}}
-        
+        </li>
+        <li>
+            <a href="{{ route('reserve-vehicle') }}" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="inbox"></i> </div>
+                <div class="side-menu__title"> Reserve Vehicle </div>
+            </a>
+        </li>
+        <li>
+            <a href="side-menu-light-file-manager.html" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="hard-drive"></i> </div>
+                <div class="side-menu__title"> File Manager </div>
+            </a>
+        </li>
+        <li>
+            <a href="side-menu-light-point-of-sale.html" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="credit-card"></i> </div>
+                <div class="side-menu__title"> Point of Sale </div>
+            </a>
+        </li>
+        <li>
+            <a href="side-menu-light-chat.html" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="message-square"></i> </div>
+                <div class="side-menu__title"> Chat </div>
+            </a>
+        </li>
+        <li>
+            <a href="side-menu-light-post.html" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="file-text"></i> </div>
+                <div class="side-menu__title"> Post </div>
+            </a>
+        </li>
+        <li>
+            <a href="side-menu-light-calendar.html" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="calendar"></i> </div>
+                <div class="side-menu__title"> Calendar </div>
+            </a>
+        </li>
         <li class="side-nav__devider my-6"></li>
         <li>
             <a href="javascript:;" class="side-menu">
@@ -163,148 +243,61 @@
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="users"></i> </div>
                 <div class="side-menu__title">
-                    Service Request 
+                    Users 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                 </div>
             </a>
             <ul class="">
                 <li>
-                    <a href="{{ route('complaints.index') }}" class="side-menu">
+                    <a href="side-menu-light-users-layout-1.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Request Now </div>
+                        <div class="side-menu__title"> Layout 1 </div>
                     </a>
                 </li>
-            </ul>
-        </li>
-        <li>
-            <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="alert-circle"></i> </div>
-                <div class="side-menu__title">
-                    Incident Report
-                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
-                </div>
-            </a>
-            <ul class="">
                 <li>
-                    <a href="{{ route('incident.index') }}" class="side-menu">
+                    <a href="side-menu-light-users-layout-2.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Report Now </div>
+                        <div class="side-menu__title"> Layout 2 </div>
                     </a>
                 </li>
-            </ul>
-        </li>
-        <li>
-            <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="credit-card"></i> </div>
-                <div class="side-menu__title">
-                    Billing Payment
-                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
-                </div>
-            </a>
-            <ul class="">
                 <li>
-                    <a href="{{ route('billing-payment.index') }}" class="side-menu">
+                    <a href="side-menu-light-users-layout-3.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Payment Now </div>
+                        <div class="side-menu__title"> Layout 3 </div>
                     </a>
                 </li>
             </ul>
-        </li>
-        <li>
-            <a href="{{ route('vehicle.index') }}" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="car"></i> </div>
-                <div class="side-menu__title"> Vehicle </div>
-            </a>
         </li>
         <li>
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="trello"></i> </div>
                 <div class="side-menu__title">
-                    Information 
+                    Profile 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                 </div>
             </a>
             <ul class="">
                 <li>
-                        <a href="{{ route('usermanagement.index') }}" class="side-menu">
+                    <a href="side-menu-light-profile-overview-1.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> User Management </div>
+                        <div class="side-menu__title"> Overview 1 </div>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('businessmanagement.index') }}" class="side-menu">
+                    <a href="side-menu-light-profile-overview-2.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Business Management </div>
+                        <div class="side-menu__title"> Overview 2 </div>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('vehiclemanagement.index') }}" class="side-menu">
+                    <a href="side-menu-light-profile-overview-3.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Vehicle Management </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('service-management.index') }}" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Service Management </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('incident-report-management.index') }}" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Incident Management </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('announcement.index') }}" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Announcement </div>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="javascript:;" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Billing Management 
-                            <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
-                        </div>
-                    </a>
-                    <ul class="">
-                        <li>
-                            <a href="{{ route('billing-management.index') }}" class="side-menu">
-                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="side-menu__title"> Create Billing </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('list-payments.index') }}" class="side-menu">
-                                <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                                <div class="side-menu__title"> List of Payments </div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="{{ route('bank-account.index') }}" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Payment Method Management </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('feedback-management.index') }}" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Feedback Management </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('appointment-management.index') }}" class="side-menu">
-                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Appointment Management </div>
+                        <div class="side-menu__title"> Overview 3 </div>
                     </a>
                 </li>
             </ul>
         </li>
-        <!-- <li>
+        <li>
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="layout"></i> </div>
                 <div class="side-menu__title">
@@ -477,9 +470,9 @@
                     </a>
                 </li>
             </ul>
-        </li> -->
+        </li>
         <li class="side-nav__devider my-6"></li>
-        {{-- <li>
+        <li>
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="inbox"></i> </div>
                 <div class="side-menu__title">
@@ -601,8 +594,8 @@
                     </a>
                 </li>
             </ul>
-        </li> --}}
-        {{-- <li>
+        </li>
+        <li>
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="sidebar"></i> </div>
                 <div class="side-menu__title">
@@ -683,7 +676,7 @@
                     </a>
                 </li>
             </ul>
-        </li> --}}
+        </li>
         <li>
             <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="hard-drive"></i> </div>
@@ -715,3 +708,4 @@
         </li>
     </ul>
 </nav>
+<!-- END: Side Menu -->

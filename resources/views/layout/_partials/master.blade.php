@@ -127,33 +127,7 @@ License: You must have a valid license purchased only from themeforest(the above
         @livewireScripts
         @stack('scripts')
         
-        <!-- BEGIN: Announcement Auto-Display Script -->
-        @if(isset($activeAnnouncements) && $activeAnnouncements->count() > 0)
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // console.log('Announcement script loaded');
-            // Display announcements with staggered timing
-            const announcements = @json($activeAnnouncements);
-            // console.log('Found announcements:', announcements);
-            
-            announcements.forEach((announcement, index) => {
-                setTimeout(() => {
-                    const functionName = 'showNotification_announcement_' + announcement.id;
-                    // console.log('Looking for function:', functionName);
-                    const showFunction = window[functionName];
-                    // console.log('Function found:', typeof showFunction);
-                    if (typeof showFunction === 'function') {
-                        // console.log('Showing announcement:', announcement.type);
-                        showFunction();
-                    } else {
-                        // console.error('Function not found:', functionName);
-                    }
-                }, (index + 1) * 2000); // Show each announcement 2 seconds apart
-            });
-        });
-        </script>
-        @endif
-        <!-- END: Announcement Auto-Display Script -->
+       
         <!-- END: JS Assets-->
     </body>
 </html>
