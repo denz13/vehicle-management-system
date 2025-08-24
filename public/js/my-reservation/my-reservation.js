@@ -250,14 +250,191 @@ function updateReservationCount(pagination) {
 
 // View reservation details
 function viewReservationDetails(reservationId) {
-    // For now, show a simple alert. You can implement a full details modal later
-    alert(`Viewing details for reservation ID: ${reservationId}`);
+    // Store the reservation ID for the details modal
+    window.detailsReservationId = reservationId;
     
-    // TODO: Implement full details modal with:
-    // - Vehicle information
-    // - Passenger list
-    // - QR code display
-    // - Full reservation details
+    // Show details modal using Tailwind modal system
+    const modal = document.getElementById('reservation-details-modal');
+    if (modal) {
+        // Use Tailwind modal toggle
+        const toggleButton = document.createElement('button');
+        toggleButton.setAttribute('data-tw-toggle', 'modal');
+        toggleButton.setAttribute('data-tw-target', '#reservation-details-modal');
+        toggleButton.style.display = 'none';
+        document.body.appendChild(toggleButton);
+        
+        // Trigger the modal
+        toggleButton.click();
+        
+        // Remove the temporary button
+        document.body.removeChild(toggleButton);
+        
+        // Load reservation details
+        loadReservationDetails(reservationId);
+    }
+}
+
+// Load reservation details for display
+function loadReservationDetails(reservationId) {
+    // Show loading state
+    const loadingDiv = document.getElementById('details-loading');
+    const contentDiv = document.getElementById('details-content');
+    
+    if (loadingDiv) loadingDiv.classList.remove('hidden');
+    if (contentDiv) contentDiv.classList.add('hidden');
+    
+    // Fetch reservation details
+    fetch(`/my-reservation/${reservationId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            populateDetailsModal(data.reservation);
+        } else {
+            showDetailsErrorMessage(data.message || 'Failed to load reservation details');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showDetailsErrorMessage('An error occurred while loading reservation details');
+    })
+    .finally(() => {
+        // Hide loading state
+        if (loadingDiv) loadingDiv.classList.add('hidden');
+        if (contentDiv) contentDiv.classList.remove('hidden');
+    });
+}
+
+// Populate the details modal with reservation data
+function populateDetailsModal(reservation) {
+    // Vehicle Information
+    const vehicleImage = document.getElementById('details-vehicle-image');
+    const vehicleName = document.getElementById('details-vehicle-name');
+    const plateNumber = document.getElementById('details-plate-number');
+    
+    if (vehicleImage) {
+        if (reservation.vehicle.vehicle_image) {
+            vehicleImage.innerHTML = `<img src="/storage/vehicles/${reservation.vehicle.vehicle_image}" alt="${reservation.vehicle.vehicle_name}" class="w-full h-full object-cover rounded-full">`;
+        } else {
+            vehicleImage.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21,15 16,10 5,21"></polyline></svg>`;
+        }
+    }
+    
+    if (vehicleName) vehicleName.textContent = reservation.vehicle.vehicle_name;
+    if (plateNumber) plateNumber.textContent = reservation.vehicle.plate_number;
+    
+    // Reservation Details
+    if (document.getElementById('details-destination')) document.getElementById('details-destination').textContent = reservation.destination;
+    if (document.getElementById('details-driver')) document.getElementById('details-driver').textContent = reservation.driver;
+    if (document.getElementById('details-reason')) document.getElementById('details-reason').textContent = reservation.reason;
+    if (document.getElementById('details-reservation-type')) document.getElementById('details-reservation-type').textContent = reservation.reservation_type.reservation_name;
+    if (document.getElementById('details-requested-by')) document.getElementById('details-requested-by').textContent = reservation.requested_by;
+    
+    // Format and display dates
+    if (document.getElementById('details-start-datetime')) {
+        const startDate = new Date(reservation.start_datetime);
+        document.getElementById('details-start-datetime').textContent = startDate.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+    
+    if (document.getElementById('details-end-datetime')) {
+        const endDate = new Date(reservation.end_datetime);
+        document.getElementById('details-end-datetime').textContent = endDate.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+    
+    // Status with color coding
+    const statusElement = document.getElementById('details-status');
+    if (statusElement) {
+        const status = reservation.status;
+        let statusHtml = '';
+        
+        switch(status) {
+            case 'pending':
+                statusHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>`;
+                break;
+            case 'approved':
+                statusHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Approved</span>`;
+                break;
+            case 'rejected':
+                statusHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Rejected</span>`;
+                break;
+            case 'completed':
+                statusHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Completed</span>`;
+                break;
+            case 'cancelled':
+                statusHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Cancelled</span>`;
+                break;
+            default:
+                statusHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+        }
+        
+        statusElement.innerHTML = statusHtml;
+    }
+    
+    // Passengers
+    const passengersContainer = document.getElementById('details-passengers');
+    if (passengersContainer) {
+        if (reservation.passengers && reservation.passengers.length > 0) {
+            let passengersHtml = '';
+            reservation.passengers.forEach(passenger => {
+                passengersHtml += `
+                    <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">${passenger.name}</div>
+                                <div class="text-sm text-gray-500">Passenger</div>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${passenger.status}</span>
+                    </div>
+                `;
+            });
+            passengersContainer.innerHTML = passengersHtml;
+        } else {
+            passengersContainer.innerHTML = '<div class="text-center py-4 text-gray-500">No passengers assigned</div>';
+        }
+    }
+    
+    // QR Code
+    const qrcodeContainer = document.getElementById('details-qrcode');
+    if (qrcodeContainer) {
+        if (reservation.qrcode) {
+            // Check if it's a file path (starts with 'qrcodes/')
+            if (reservation.qrcode.startsWith('qrcodes/')) {
+                qrcodeContainer.innerHTML = `<img src="/storage/${reservation.qrcode}" alt="QR Code" class="w-32 h-32">`;
+            } else {
+                // If it's JSON data, show a placeholder or generate QR code
+                qrcodeContainer.innerHTML = '<div class="text-gray-500">QR Code data available</div>';
+            }
+        } else {
+            qrcodeContainer.innerHTML = '<div class="text-gray-500">No QR Code available</div>';
+        }
+    }
+    
+    // Coordinates
+    if (document.getElementById('details-longitude')) document.getElementById('details-longitude').textContent = reservation.longitude;
+    if (document.getElementById('details-latitude')) document.getElementById('details-latitude').textContent = reservation.latitude;
 }
 
 // Update reservation
@@ -1193,5 +1370,17 @@ function showCancelSuccessMessage(message) {
     } else {
         // Fallback to console if notification system not available
         console.log('Success:', message);
+    }
+}
+
+function showDetailsErrorMessage(message) {
+    if (typeof showNotification_details_error !== 'undefined') {
+        showNotification_details_error();
+    } else if (typeof showNotification_error !== 'undefined') {
+        // Fallback to general error notification
+        showNotification_error();
+    } else {
+        // Fallback to console if notification system not available
+        console.log('Error:', message);
     }
 }

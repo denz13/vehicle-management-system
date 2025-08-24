@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\tbl_reserve_vehicle_passenger;
 use App\Models\tbl_vehicle;
-use App\Models\tbl_user;
+use App\Models\User;
 use App\Models\tbl_reservation_type;
 
 class tbl_reserve_vehicle extends Model
@@ -25,7 +25,7 @@ class tbl_reserve_vehicle extends Model
 
     public function user()
     {
-        return $this->belongsTo(tbl_user::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function reservation_type()
