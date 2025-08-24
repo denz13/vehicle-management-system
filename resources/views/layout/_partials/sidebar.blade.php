@@ -79,6 +79,12 @@
                         <div class="side-menu__title"> Create Vehicle </div>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('list-request-reserve') }}" class="side-menu">
+                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                        <div class="side-menu__title"> List Request Reserve </div>
+                    </a>
+                </li>
             </ul>
         </li>
         <li>
