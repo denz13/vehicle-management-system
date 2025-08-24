@@ -958,6 +958,11 @@ function submitReservation() {
             // Show success message
             showSuccessMessage(data.message);
             
+            // Display QR code if available
+            if (data.qrcode_path) {
+                displayQRCode(data.qrcode_path, data.reservation_id);
+            }
+            
             // Close modal
             const modal = document.getElementById('reserve-vehicle-modal');
             const modalInstance = tailwind.Modal.getInstance(modal);
@@ -1135,5 +1140,67 @@ function showValidationErrorMessage() {
     } else {
         // Fallback to console if notification system not available
         console.log('Validation Error: Please check the form for errors');
+    }
+}
+
+// Display QR code after successful reservation
+function displayQRCode(qrCodePath, reservationId) {
+    // Create QR code modal content
+    const qrModalContent = `
+        <div class="text-center">
+            <h3 class="text-lg font-medium mb-4">Reservation QR Code</h3>
+            
+            <div class="flex justify-center mb-4">
+                <div class="border-2 border-slate-200 rounded-lg p-4 bg-white">
+                    <img src="/storage/${qrCodePath}" alt="Reservation QR Code" class="w-64 h-64 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="hidden w-64 h-64 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9h.01"></path><path d="M15 9h.01"></path><path d="M9 15h.01"></path><path d="M15 15h.01"></path><path d="M9 12h6"></path><path d="M12 9v6"></path></svg>
+                        <p class="text-xs text-slate-500 mt-2">QR Code Generated</p>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-slate-500 mb-4">Scan this QR code to view reservation details</p>
+            <div class="flex justify-center space-x-2">
+                <button onclick="downloadQRCode('${qrCodePath}', ${reservationId})" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download w-4 h-4 mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7,10 12,15 17,10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download QR Code
+                </button>
+                <button onclick="closeQRModal()" class="btn btn-secondary">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Show QR code in a modal
+    const qrModal = document.getElementById('qr-code-modal');
+    if (qrModal) {
+        document.getElementById('qr-code-content').innerHTML = qrModalContent;
+        const modalInstance = tailwind.Modal.getOrCreateInstance(qrModal);
+        modalInstance.show();
+    } else {
+        // Fallback: show in alert if modal doesn't exist
+        alert(`Reservation successful! QR Code saved at: ${qrCodePath}`);
+    }
+}
+
+// Download QR code
+function downloadQRCode(qrCodePath, reservationId) {
+    const link = document.createElement('a');
+    link.href = `/storage/${qrCodePath}`;
+    link.download = `reservation_${reservationId}_qr.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Close QR code modal
+function closeQRModal() {
+    const qrModal = document.getElementById('qr-code-modal');
+    if (qrModal) {
+        const modalInstance = tailwind.Modal.getInstance(qrModal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
     }
 }

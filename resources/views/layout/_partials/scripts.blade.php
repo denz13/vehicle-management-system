@@ -171,7 +171,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
-{{-- <script src="{{ url('') }}/assets/html5-qrcode/html5-qrcode.min.js{{ GET_RES_TIMESTAMP() }}"></script> --}}
+<script src="{{ url('') }}/assets/html5-qrcode/html5-qrcode.min.js{{ GET_RES_TIMESTAMP() }}"></script>
 
 <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -243,3 +243,6 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+
+<!-- QR Code Generation Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
