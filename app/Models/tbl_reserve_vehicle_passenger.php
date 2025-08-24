@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 
 class tbl_reserve_vehicle_passenger extends Model
 {
@@ -21,7 +22,7 @@ class tbl_reserve_vehicle_passenger extends Model
 
     public function passenger()
     {
-        return $this->belongsTo(tbl_user::class, 'passenger_id');
+        return $this->belongsTo(User::class, 'passenger_id');
     }
     
     

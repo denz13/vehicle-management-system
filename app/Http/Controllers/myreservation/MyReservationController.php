@@ -172,6 +172,81 @@ class MyReservationController extends Controller
         }
     }
     
+    public function show($id)
+    {
+        try {
+            $user = Auth::user();
+            
+            \Log::info('Show method called for reservation ID: ' . $id . ', User ID: ' . $user->id);
+            
+            // Find the reservation and ensure it belongs to the current user
+            $reservation = tbl_reserve_vehicle::with(['vehicle', 'reservation_type', 'user'])
+                ->where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+            
+            if (!$reservation) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Reservation not found or you do not have permission to view it.'
+                ], 404);
+            }
+            
+            // Load passengers separately to handle soft-deleted records
+            \Log::info('Loading passengers for reservation ID: ' . $id);
+            $passengers = tbl_reserve_vehicle_passenger::where('reserve_vehicle_id', $id)
+                ->whereNull('deleted_at') // Only active passengers
+                ->get();
+            \Log::info('Found ' . $passengers->count() . ' passengers');
+            
+            // Format the data for display
+            $formattedReservation = [
+                'id' => $reservation->id,
+                'vehicle' => [
+                    'vehicle_name' => $reservation->vehicle->vehicle_name ?? 'N/A',
+                    'plate_number' => $reservation->vehicle->plate_number ?? 'N/A',
+                    'vehicle_image' => $reservation->vehicle->vehicle_image ?? null,
+                ],
+                'destination' => $reservation->destination,
+                'longitude' => $reservation->longitude,
+                'latitude' => $reservation->latitude,
+                'driver' => $reservation->driver,
+                'start_datetime' => $reservation->start_datetime,
+                'end_datetime' => $reservation->end_datetime,
+                'reason' => $reservation->reason,
+                'reservation_type' => [
+                    'reservation_name' => $reservation->reservation_type->reservation_name ?? 'N/A',
+                ],
+                'status' => $reservation->status,
+                'requested_by' => $reservation->user->name ?? 'N/A',
+                'qrcode' => $reservation->qrcode,
+                'passengers' => $passengers->map(function($passenger) {
+                    return [
+                        'id' => $passenger->passenger_id,
+                        'name' => $passenger->passenger_name ?? 'Unknown Passenger',
+                        'status' => $passenger->status ?? 'active'
+                    ];
+                }),
+                'created_at' => $reservation->created_at,
+                'updated_at' => $reservation->updated_at
+            ];
+            
+            \Log::info('Successfully formatted reservation data, returning response');
+            return response()->json([
+                'success' => true,
+                'reservation' => $formattedReservation
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in show method: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load reservation details: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
     public function update(Request $request, $id)
     {
         try {

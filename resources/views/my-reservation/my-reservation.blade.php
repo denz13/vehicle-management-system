@@ -108,9 +108,11 @@
                             <a class="flex items-center mr-3" href="javascript:;" onclick="viewReservationDetails({{ $reservation->id }})">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye w-4 h-4 mr-1"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Details
                             </a>
-                            <a class="flex items-center mr-3" href="javascript:;" onclick="updateReservation({{ $reservation->id }})">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit w-4 h-4 mr-1"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 10.5-10.5z"></path></svg> Update
-                            </a>
+                            @if($reservation->status === 'pending')
+                                <a class="flex items-center mr-3" href="javascript:;" onclick="updateReservation({{ $reservation->id }})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit w-4 h-4 mr-1"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 10.5-10.5z"></path></svg> Update
+                                </a>
+                            @endif
                             @if($reservation->status === 'pending')
                                 <a class="flex items-center text-danger" href="javascript:;" onclick="cancelReservation({{ $reservation->id }})">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-4 h-4 mr-1"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Cancel
@@ -162,9 +164,108 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div id="reservation-details-content">
-                    <!-- Reservation details will be loaded here -->
+                <div id="details-loading" class="text-center py-8">
+                    <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-indigo-500 hover:bg-indigo-400 transition ease-in-out duration-150 cursor-not-allowed">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <polyline class="opacity-75" points="20,6 12,14 6,20"></polyline>
+                        </svg>
+                        Loading reservation details...
+                    </div>
                 </div>
+                
+                <div id="details-content" class="hidden">
+                    <!-- Vehicle Information -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Vehicle Information</h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div id="details-vehicle-image" class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                                    <!-- Vehicle image will be populated here -->
+                                </div>
+                                <div>
+                                    <div id="details-vehicle-name" class="text-lg font-medium text-gray-900"></div>
+                                    <div id="details-plate-number" class="text-sm text-gray-500"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reservation Details -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Reservation Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+                                <div id="details-destination" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Driver</label>
+                                <div id="details-driver" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date & Time</label>
+                                <div id="details-start-datetime" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">End Date & Time</label>
+                                <div id="details-end-datetime" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                                <div id="details-reason" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Reservation Type</label>
+                                <div id="details-reservation-type" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <div id="details-status" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Requested By</label>
+                                <div id="details-requested-by" class="text-gray-900"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passengers -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Passengers</h3>
+                        <div id="details-passengers" class="bg-gray-50 rounded-lg p-4">
+                            <!-- Passengers will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">QR Code</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <div id="details-qrcode" class="flex justify-center">
+                                <!-- QR code will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coordinates -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Location Coordinates</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                                <div id="details-longitude" class="text-gray-900"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                                <div id="details-latitude" class="text-gray-900"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-20">Close</button>
             </div>
         </div>
     </div>
@@ -325,6 +426,8 @@
 </div>
 <!-- END: Update Reservation Modal -->
 
+
+
 <!-- BEGIN: Notification Toasts -->
 <x-notification-toast 
     id="success" 
@@ -394,6 +497,18 @@
     :showButton="false" 
     :autoHide="true" 
     :duration="3000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="details_error" 
+    type="error" 
+    title="Error!" 
+    message="Failed to load reservation details" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="5000" 
     position="right" 
     gravity="top" 
 />
