@@ -15,32 +15,27 @@ class ListRequestReserveController extends Controller
 {
     public function index()
     {
-        // Get all reservation types
-        $reservationTypes = tbl_reservation_type::where('status', 'active')->get();
-        
-        // Get all vehicle reservations with related data
-        $reservations = tbl_reserve_vehicle::with([
-            'vehicle',
-            'user',
-            'reservation_type',
-            'passengers.passenger'
-        ])->orderBy('created_at', 'desc')->get();
-        
-        // Get all vehicles
+        $reservations = tbl_reserve_vehicle::with(['vehicle', 'user', 'reservation_type', 'passengers.passenger'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $vehicles = tbl_vehicle::all();
-        
-        // Get all users
         $users = User::all();
+        $reservationTypes = tbl_reservation_type::all();
         
-        // Get all passengers
-        $passengers = tbl_reserve_vehicle_passenger::with(['passenger', 'reserve_vehicle'])->get();
-        
+        // Get unique statuses from the reservations table
+        $uniqueStatuses = tbl_reserve_vehicle::select('status')
+            ->distinct()
+            ->pluck('status')
+            ->filter() // Remove null/empty values
+            ->values();
+
         return view('vehicle-management.list-request-reserve', compact(
+            'reservations', 
+            'vehicles', 
+            'users', 
             'reservationTypes',
-            'reservations',
-            'vehicles',
-            'users',
-            'passengers'
+            'uniqueStatuses'
         ));
     }
 
