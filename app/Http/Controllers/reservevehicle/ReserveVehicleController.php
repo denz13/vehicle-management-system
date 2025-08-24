@@ -98,6 +98,9 @@ class ReserveVehicleController extends Controller
 
     public function store(Request $request)
     {
+        // Log the incoming request data for debugging
+        \Log::info('Reservation request data:', $request->all());
+        
         $validator = Validator::make($request->all(), [
             'vehicle_id' => 'required|exists:tbl_vehicle,id',
             'requested_user_id' => 'required|exists:users,id',
@@ -105,6 +108,7 @@ class ReserveVehicleController extends Controller
             'longitude' => 'nullable|string|max:50',
             'latitude' => 'nullable|string|max:50',
             'driver' => 'required|exists:users,id',
+            'driver_user_id' => 'required|exists:users,id', // Add validation for driver_user_id
             'start_datetime' => 'required|date|after:now',
             'end_datetime' => 'required|date|after:start_datetime',
             'reason' => 'required|string|max:1000',
@@ -147,8 +151,8 @@ class ReserveVehicleController extends Controller
             $requestedUser = User::find($request->requested_user_id);
             $driverUser = User::find($request->driver);
 
-            // Create the reservation
-            $reservation = tbl_reserve_vehicle::create([
+            // Log the data being saved for debugging
+            $reservationData = [
                 'vehicle_id' => $request->vehicle_id,
                 'user_id' => $request->requested_user_id,
                 'requested_name' => $requestedUser->name ?? 'Unknown User',
@@ -156,13 +160,19 @@ class ReserveVehicleController extends Controller
                 'longitude' => $request->longitude,
                 'latitude' => $request->latitude,
                 'driver' => $driverUser->name ?? 'Unknown Driver',
+                'driver_user_id' => $request->driver_user_id ?? $request->driver,
                 'start_datetime' => $request->start_datetime,
                 'end_datetime' => $request->end_datetime,
                 'reason' => $request->reason,
                 'reservation_type_id' => $request->reservation_type_id,
-                'qrcode' => null, // Will be updated after creation
+                'qrcode' => null,
                 'status' => 'pending'
-            ]);
+            ];
+            
+            \Log::info('Creating reservation with data:', $reservationData);
+
+            // Create the reservation
+            $reservation = tbl_reserve_vehicle::create($reservationData);
 
             // Generate QR code with reservation details
             $qrCodePath = $this->generateQRCode([

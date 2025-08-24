@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize passenger management
     initializePassengerManagement();
     
+    // Initialize driver selection handling
+    initializeDriverSelection();
+    
     // Initialize map functionality
     initializeMap();
 });
@@ -173,10 +176,22 @@ function initializeModalEvents() {
                 
                 // Ensure Tom Select is properly initialized
                 ensureTomSelectInitialized();
+                
+                // Ensure driver selection is properly initialized
+                initializeDriverSelection();
+                
+                // Sync driver_user_id with current driver selection
+                syncDriverUserId();
             }, 300);
             
             // Refresh reservation types to ensure latest data
             refreshReservationTypes();
+        });
+        
+        // Clean up when modal is hidden
+        reserveModal.addEventListener('hidden.tw.modal', function() {
+            // Reset form when modal is hidden
+            console.log('Modal hidden, cleanup complete');
         });
     }
     
@@ -773,6 +788,11 @@ function reserveVehicle(vehicleId) {
     setTimeout(() => {
         ensureTomSelectInitialized();
     }, 100);
+    
+    // Ensure driver selection is properly initialized
+    setTimeout(() => {
+        initializeDriverSelection();
+    }, 150);
 }
 
 // Test function to check if JavaScript is working
@@ -796,6 +816,29 @@ function submitReservation() {
     // Clear previous errors
     clearReservationErrors();
     console.log('Errors cleared');
+    
+    // Ensure driver_user_id is synced before submission
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (driverSelect && driverUserIdField) {
+        if (driverSelect.value) {
+            driverUserIdField.value = driverSelect.value;
+            driverUserIdField.setAttribute('value', driverSelect.value);
+            console.log('Driver user ID synced to:', driverSelect.value);
+        } else {
+            console.error('No driver selected!');
+            showReservationError('driver', 'Please select a driver');
+            return;
+        }
+    } else {
+        console.error('Driver elements not found!');
+        alert('Driver selection elements not found. Please refresh the page.');
+        return;
+    }
+    
+    // Debug form data before submission
+    debugFormData();
     
     // Get form values
     const form = document.getElementById('reservation-form');
@@ -856,6 +899,7 @@ function submitReservation() {
     console.log('requested_user_id:', formData.get('requested_user_id'));
     console.log('destination:', formData.get('destination'));
     console.log('driver:', formData.get('driver'));
+    console.log('driver_user_id:', formData.get('driver_user_id'));
     console.log('start_datetime:', formData.get('start_datetime'));
     console.log('end_datetime:', formData.get('end_datetime'));
     console.log('reason:', formData.get('reason'));
@@ -886,6 +930,19 @@ function submitReservation() {
     if (!formData.get('driver')) {
         console.log('Driver missing');
         showReservationError('driver', 'Driver is required');
+        return;
+    }
+    
+    // Ensure driver_user_id is set in FormData
+    if (driverSelect && driverSelect.value) {
+        formData.set('driver_user_id', driverSelect.value);
+        console.log('Driver user ID set in FormData:', driverSelect.value);
+    }
+    
+    // Validate driver_user_id is present
+    if (!formData.get('driver_user_id')) {
+        console.log('Driver user ID missing');
+        showReservationError('driver', 'Driver user ID is required');
         return;
     }
     
@@ -938,6 +995,15 @@ function submitReservation() {
     reserveBtn.disabled = true;
     
     console.log('Making AJAX request to /reserve-vehicle');
+    
+
+    
+    // Log the final form data before sending
+    console.log('=== FINAL FORM DATA BEFORE AJAX ===');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    console.log('=== END FINAL FORM DATA ===');
     
     // Send AJAX request
     fetch('/reserve-vehicle', {
@@ -1052,6 +1118,10 @@ function resetReservationForm() {
     // Clear driver selection
     const driverField = document.getElementById('driver');
     if (driverField) driverField.value = '';
+    
+    // Clear driver user ID
+    const driverUserIdField = document.getElementById('driver_user_id');
+    if (driverUserIdField) driverUserIdField.value = '';
     
     // Clear datetime fields
     const startDatetimeField = document.getElementById('start_datetime');
@@ -1204,3 +1274,237 @@ function closeQRModal() {
         }
     }
 }
+
+// Initialize driver selection handling
+function initializeDriverSelection() {
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (driverSelect && driverUserIdField) {
+        // Set initial value if driver is pre-selected
+        if (driverSelect.value) {
+            driverUserIdField.value = driverSelect.value;
+            console.log('Initial driver value set:', driverSelect.value);
+        }
+        
+        // Remove any existing event listeners to prevent duplicates
+        driverSelect.removeEventListener('change', handleDriverChange);
+        driverSelect.removeEventListener('input', handleDriverChange);
+        
+        // Add event listeners to ensure we catch all changes
+        driverSelect.addEventListener('change', handleDriverChange);
+        driverSelect.addEventListener('input', handleDriverChange);
+        
+        // CRITICAL: Add a real-time sync every time the value changes
+        driverSelect.addEventListener('input', function() {
+            if (this.value && driverUserIdField) {
+                driverUserIdField.value = this.value;
+                driverUserIdField.setAttribute('value', this.value);
+                console.log('Driver input event: driver_user_id synced to:', this.value);
+            }
+        });
+        
+        console.log('Driver selection handling initialized');
+        logDriverFieldState();
+    } else {
+        console.warn('Driver select or driver_user_id field not found');
+    }
+}
+
+
+
+// Handle driver selection change
+function handleDriverChange() {
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (driverSelect && driverUserIdField) {
+        const selectedDriverId = driverSelect.value;
+        driverUserIdField.value = selectedDriverId;
+        driverUserIdField.setAttribute('value', selectedDriverId);
+        console.log('Driver selected:', selectedDriverId);
+        console.log('Driver user ID field updated:', driverUserIdField.value);
+        
+        // Log current state
+        logDriverFieldState();
+    }
+}
+
+// Sync driver_user_id with current driver selection
+function syncDriverUserId() {
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (driverSelect && driverUserIdField) {
+        if (driverSelect.value) {
+            driverUserIdField.value = driverSelect.value;
+            driverUserIdField.setAttribute('value', driverSelect.value);
+            console.log('Driver user ID synced to:', driverSelect.value);
+        }
+    }
+}
+
+// Log the current state of driver fields for debugging
+function logDriverFieldState() {
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    console.log('=== DRIVER FIELDS STATE ===');
+    console.log('Driver select value:', driverSelect ? driverSelect.value : 'Element not found');
+    console.log('Driver user ID field value:', driverUserIdField ? driverUserIdField.value : 'Element not found');
+    console.log('Driver select options:', driverSelect ? Array.from(driverSelect.options).map(opt => ({value: opt.value, text: opt.text, selected: opt.selected})) : 'Element not found');
+    console.log('=== END DRIVER FIELDS STATE ===');
+}
+
+// Debug function to manually test driver selection
+function testDriverSelection() {
+    console.log('=== TESTING DRIVER SELECTION ===');
+    
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (!driverSelect) {
+        console.error('Driver select not found!');
+        return;
+    }
+    
+    if (!driverUserIdField) {
+        console.error('Driver user ID field not found!');
+        return;
+    }
+    
+    console.log('Current driver select value:', driverSelect.value);
+    console.log('Current driver_user_id value:', driverUserIdField.value);
+    
+    // Simulate a change event
+    if (driverSelect.options.length > 1) {
+        const testValue = driverSelect.options[1].value;
+        driverSelect.value = testValue;
+        driverSelect.dispatchEvent(new Event('change'));
+        
+        console.log('Test value set:', testValue);
+        console.log('After change event - driver_user_id value:', driverUserIdField.value);
+    }
+    
+    console.log('=== END TESTING ===');
+}
+
+
+
+// Function to debug form submission data
+function debugFormData() {
+    console.log('=== DEBUGGING FORM DATA ===');
+    
+    const form = document.getElementById('reservation-form');
+    if (!form) {
+        console.error('Form not found!');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    
+    console.log('Form fields:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    // Check specific fields
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    console.log('Driver select value:', driverSelect ? driverSelect.value : 'Element not found');
+    console.log('Driver user ID field value:', driverUserIdField ? driverUserIdField.value : 'Element not found');
+    
+    // Check if driver_user_id is empty
+    if (driverUserIdField && !driverUserIdField.value) {
+        console.warn('WARNING: driver_user_id field is empty!');
+        
+        // Try to fix it
+        if (driverSelect && driverSelect.value) {
+            driverUserIdField.value = driverSelect.value;
+            console.log('Fixed: driver_user_id set to:', driverSelect.value);
+        }
+    }
+    
+    console.log('=== END DEBUGGING ===');
+}
+
+
+
+// Simple test function that can be called from console
+function testDriverSync() {
+    console.log('=== TESTING DRIVER SYNC ===');
+    
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (!driverSelect) {
+        console.error('Driver select not found!');
+        return false;
+    }
+    
+    if (!driverUserIdField) {
+        console.error('Driver user ID field not found!');
+        return false;
+    }
+    
+    console.log('Driver select value:', driverSelect.value);
+    console.log('Driver user ID field value:', driverUserIdField.value);
+    
+    // Test sync
+    if (driverSelect.value) {
+        driverUserIdField.value = driverSelect.value;
+        console.log('Sync test: driver_user_id updated to:', driverSelect.value);
+        return true;
+    } else {
+        console.log('No driver selected');
+        return false;
+    }
+}
+
+// Function to manually set driver and test sync
+function setDriverAndTest(driverId) {
+    const driverSelect = document.getElementById('driver');
+    if (driverSelect) {
+        driverSelect.value = driverId;
+        driverSelect.dispatchEvent(new Event('change'));
+        console.log('Driver set to:', driverId);
+        testDriverSync();
+    }
+}
+
+
+
+// Simple function to test driver sync - call this from console
+function testDriverSyncSimple() {
+    const driverSelect = document.getElementById('driver');
+    const driverUserIdField = document.getElementById('driver_user_id');
+    
+    if (!driverSelect || !driverUserIdField) {
+        console.error('Elements not found!');
+        return;
+    }
+    
+    console.log('Before sync:');
+    console.log('Driver select value:', driverSelect.value);
+    console.log('Driver user ID value:', driverUserIdField.value);
+    
+    // Force sync
+    if (driverSelect.value) {
+        driverUserIdField.value = driverSelect.value;
+        driverUserIdField.setAttribute('value', driverSelect.value);
+        console.log('After sync: driver_user_id =', driverUserIdField.value);
+        
+        // Test form data
+        const form = document.getElementById('reservation-form');
+        if (form) {
+            const formData = new FormData(form);
+            console.log('FormData driver_user_id:', formData.get('driver_user_id'));
+        }
+    } else {
+        console.log('No driver selected');
+    }
+}
+
+
+
