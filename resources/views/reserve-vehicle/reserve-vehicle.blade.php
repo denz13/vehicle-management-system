@@ -176,8 +176,20 @@
                                     <option value="{{ $user['id'] }}">{{ $user['name'] }}</option>
                                 @endforeach
                             </select>
+                            <input type="hidden" id="driver_user_id" name="driver_user_id" value="">
                             <div class="text-danger text-xs mt-1" id="driver_error"></div>
                                 </div>
+
+                                <div class="col-span-12 md:col-span-6">
+                            <label for="reservation_type_id" class="form-label">Reservation Type <span class="text-danger">*</span></label>
+                            <select id="reservation_type_id" name="reservation_type_id" class="form-select" required>
+                                <option value="">Select reservation type</option>
+                                @foreach($reservationTypes as $type)
+                                    <option value="{{ $type->id }}">{{ $type->reservation_name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="text-danger text-xs mt-1" id="reservation_type_id_error"></div>
+                        </div>
                         
                         <div class="col-span-12 md:col-span-6">
                             <label for="start_datetime" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
@@ -193,6 +205,7 @@
                                 <span class="font-medium">Tip:</span> You can select the same date with different times for same-day trips
                                     </div>
                                 </div>
+                        
                         
                         <div class="col-span-12">
                             <label for="reason" class="form-label">Purpose/Reason <span class="text-danger">*</span></label>
@@ -249,16 +262,6 @@
                             <h3 class="text-lg font-medium mb-3 text-primary">Passenger Information</h3>
                                     </div>
                         
-                        <div class="col-span-12 md:col-span-6">
-                            <label for="reservation_type_id" class="form-label">Reservation Type <span class="text-danger">*</span></label>
-                            <select id="reservation_type_id" name="reservation_type_id" class="form-select" required>
-                                <option value="">Select reservation type</option>
-                                @foreach($reservationTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->reservation_name }}</option>
-                                @endforeach
-                            </select>
-                            <div class="text-danger text-xs mt-1" id="reservation_type_id_error"></div>
-                                </div>
                         
                         <!-- Dynamic Passenger List -->
                         <div class="col-span-12">
@@ -287,7 +290,6 @@
             <div class="modal-footer">
                 <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-20 mr-1">Cancel</button>
                 <button type="button" class="btn btn-success w-20" onclick="submitReservation()">Reserve</button>
-                <button type="button" class="btn btn-warning btn-sm" onclick="testSubmitFunction()">Test Function</button>
                                 </div>
                             </div>
                         </div>
