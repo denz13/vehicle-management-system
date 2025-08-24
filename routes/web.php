@@ -108,7 +108,7 @@ Route::middleware('auth')->group(function() {
     Route::get('my-reservation/{id}', [MyReservationController::class, 'show'])->name('my-reservation.show');
     Route::post('my-reservation', [MyReservationController::class, 'store'])->name('my-reservation.store');
     Route::get('my-reservation/{id}/edit', [MyReservationController::class, 'edit'])->name('my-reservation.edit');
-    Route::put('my-reservation/{id}', [MyReservationController::class, 'update'])->name('my-reservation.update');
+    Route::post('my-reservation/{id}', [MyReservationController::class, 'update'])->name('my-reservation.update');
     Route::delete('my-reservation/{id}', [MyReservationController::class, 'destroy'])->name('my-reservation.destroy');
     Route::post('my-reservation/{id}/cancel', [MyReservationController::class, 'cancelReservation'])->name('my-reservation.cancel');
 });

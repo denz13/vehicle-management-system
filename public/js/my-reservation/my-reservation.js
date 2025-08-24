@@ -357,17 +357,21 @@ function populateUpdateForm(reservation) {
     document.getElementById('update_destination').value = reservation.destination || '';
     document.getElementById('update_longitude').value = reservation.longitude || '';
     document.getElementById('update_latitude').value = reservation.latitude || '';
-    // For driver field, we need to find the user ID by name since driver stores the name, not ID
-    // We'll leave it empty and let the user select again, or find the user by name
+    // Set driver field using driver_user_id if available
     const driverSelect = document.getElementById('update_driver');
     if (driverSelect) {
-        // Find the option that matches the driver name
-        const options = Array.from(driverSelect.options);
-        const driverOption = options.find(option => option.text === reservation.driver);
-        if (driverOption) {
-            driverSelect.value = driverOption.value;
+        if (reservation.driver_user_id) {
+            // Use the driver_user_id directly
+            driverSelect.value = reservation.driver_user_id;
         } else {
-            driverSelect.value = ''; // Leave empty if no match found
+            // Fallback: try to find by name (for existing data)
+            const options = Array.from(driverSelect.options);
+            const driverOption = options.find(option => option.text === reservation.driver);
+            if (driverOption) {
+                driverSelect.value = driverOption.value;
+            } else {
+                driverSelect.value = ''; // Leave empty if no match found
+            }
         }
     }
     document.getElementById('update_start_datetime').value = reservation.start_datetime ? reservation.start_datetime.slice(0, 16) : '';
@@ -379,6 +383,11 @@ function populateUpdateForm(reservation) {
     window.pendingPassengerData = reservation.passengers || [];
     console.log('Stored passenger data:', window.pendingPassengerData);
     console.log('Passenger data structure:', window.pendingPassengerData.length > 0 ? Object.keys(window.pendingPassengerData[0]) : 'No passengers');
+    
+    // Debug: Log the reservation data
+    console.log('Reservation data received:', reservation);
+    console.log('Driver field:', reservation.driver);
+    console.log('Driver user ID:', reservation.driver_user_id);
     
     // Update map marker if coordinates exist and map is ready
     if (reservation.longitude && reservation.latitude) {
@@ -443,107 +452,224 @@ function populateUpdateForm(reservation) {
 
 // Handle update form submission
 function submitUpdateForm() {
-    const reservationId = window.updateReservationId;
-    if (!reservationId) {
-        alert('No reservation selected for update');
-        return;
-    }
+    console.log('=== SUBMIT UPDATE FORM FUNCTION CALLED ===');
+    console.log('Function execution started at:', new Date().toISOString());
     
-    // Get form data
-    const formData = new FormData();
-    formData.append('destination', document.getElementById('update_destination').value.trim());
-    formData.append('longitude', document.getElementById('update_longitude').value.trim());
-    formData.append('latitude', document.getElementById('update_latitude').value.trim());
-    formData.append('driver', document.getElementById('update_driver').value.trim());
-    formData.append('start_datetime', document.getElementById('update_start_datetime').value);
-    formData.append('end_datetime', document.getElementById('update_end_datetime').value);
-    formData.append('reason', document.getElementById('update_reason').value.trim());
-    formData.append('reservation_type_id', document.getElementById('update_reservation_type_id').value);
-    
-    // Get selected passengers
-    const passengerSelect = document.getElementById('update_passengers');
-    if (passengerSelect && passengerSelect.tomselect) {
-        const selectedPassengers = passengerSelect.tomselect.getValue();
-        if (selectedPassengers && selectedPassengers.length > 0) {
-            selectedPassengers.forEach(passengerId => {
-                formData.append('passengers[]', passengerId);
-            });
+    try {
+        const reservationId = window.updateReservationId;
+        console.log('Reservation ID from window:', reservationId);
+        
+        if (!reservationId) {
+            alert('No reservation selected for update');
+            return;
         }
-    }
-    
-    // Validate form data
-    if (!formData.get('destination') || !formData.get('driver') || 
-        !formData.get('start_datetime') || !formData.get('end_datetime') || 
-        !formData.get('reason') || !formData.get('reservation_type_id')) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    if (formData.getAll('passengers[]').length === 0) {
-        alert('Please select at least one passenger');
-        return;
-    }
-    
-    // Show loading state
-    const updateBtn = document.querySelector('#update-reservation-modal .btn-primary');
-    let originalText = 'Update';
-    if (updateBtn) {
-        originalText = updateBtn.textContent;
-        updateBtn.textContent = 'Updating...';
-        updateBtn.disabled = true;
-    }
-    
-    // Submit update request
-    fetch(`/my-reservation/${reservationId}`, {
-        method: 'PUT',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-            'Accept': 'application/json'
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Show success message
-            if (typeof showNotification_success !== 'undefined') {
-                showNotification_success();
+        
+        // Get form data - only include fields that have values
+        const formData = new FormData();
+        console.log('FormData object created:', formData);
+        
+        // No method spoofing needed since we're using POST
+        console.log('Using POST method for update');
+        
+        // Add CSRF token to FormData
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        formData.append('_token', csrfToken);
+        console.log('CSRF token added to FormData');
+        
+        // Debug: Check if form elements exist and their values
+        console.log('=== FORM ELEMENTS CHECK ===');
+        console.log('Form submission started - checking elements...');
+        console.log('update_destination element:', document.getElementById('update_destination'));
+        console.log('update_driver element:', document.getElementById('update_driver'));
+        console.log('update_start_datetime element:', document.getElementById('update_start_datetime'));
+        
+        console.log('=== COLLECTING FORM VALUES ===');
+        
+        const destination = document.getElementById('update_destination').value.trim();
+        console.log('Destination value:', destination);
+        if (destination) {
+            formData.append('destination', destination);
+            console.log('Destination added to FormData');
+        }
+        
+        const longitude = document.getElementById('update_longitude').value.trim();
+        console.log('Longitude value:', longitude);
+        if (longitude) {
+            formData.append('longitude', longitude);
+            console.log('Longitude added to FormData');
+        }
+        
+        const latitude = document.getElementById('update_latitude').value.trim();
+        console.log('Latitude value:', latitude);
+        if (latitude) {
+            formData.append('latitude', latitude);
+            console.log('Latitude added to FormData');
+        }
+        
+        const driver = document.getElementById('update_driver').value.trim();
+        console.log('Driver value:', driver);
+        if (driver) {
+            formData.append('driver', driver);
+            console.log('Driver added to FormData');
+        }
+        
+        const startDatetime = document.getElementById('update_start_datetime').value;
+        console.log('Start datetime value:', startDatetime);
+        if (startDatetime) {
+            formData.append('start_datetime', startDatetime);
+            console.log('Start datetime added to FormData');
+        }
+        
+        const endDatetime = document.getElementById('update_end_datetime').value;
+        console.log('End datetime value:', endDatetime);
+        if (endDatetime) {
+            formData.append('end_datetime', endDatetime);
+            console.log('End datetime added to FormData');
+        }
+        
+        const reason = document.getElementById('update_reason').value.trim();
+        console.log('Reason value:', reason);
+        if (reason) {
+            formData.append('reason', reason);
+            console.log('Reason added to FormData');
+        }
+        
+        const reservationTypeId = document.getElementById('update_reservation_type_id').value;
+        console.log('Reservation type ID value:', reservationTypeId);
+        if (reservationTypeId) {
+            formData.append('reservation_type_id', reservationTypeId);
+            console.log('Reservation type ID added to FormData');
+        }
+        
+        // Get selected passengers - only include if passengers are selected
+        const passengerSelect = document.getElementById('update_passengers');
+        if (passengerSelect && passengerSelect.tomselect) {
+            const selectedPassengers = passengerSelect.tomselect.getValue();
+            if (selectedPassengers && selectedPassengers.length > 0) {
+                // Filter out empty values and add to form data
+                selectedPassengers.filter(passengerId => passengerId && passengerId.trim() !== '').forEach(passengerId => {
+                    formData.append('passengers[]', passengerId);
+                });
             }
+        }
+        
+        // Validate form data - make validation more flexible for partial updates
+        let hasAtLeastOneField = false;
+        
+        // Check if at least one field is filled
+        if (formData.get('destination') || formData.get('driver') || 
+            formData.get('start_datetime') || formData.get('end_datetime') || 
+            formData.get('reason') || formData.get('reservation_type_id') ||
+            formData.getAll('passengers[]').length > 0) {
+            hasAtLeastOneField = true;
+        }
+        
+        if (!hasAtLeastOneField) {
+            alert('Please fill in at least one field to update');
+            return;
+        }
+        
+        // Additional validation for datetime fields if both are provided
+        if (formData.get('start_datetime') && formData.get('end_datetime')) {
+            const startDate = new Date(formData.get('start_datetime'));
+            const endDate = new Date(formData.get('end_datetime'));
             
-            // Close modal using Tailwind modal system
-            const modal = document.getElementById('update-reservation-modal');
-            if (modal) {
-                // Find and click the close button
-                const closeButton = modal.querySelector('[data-tw-dismiss="modal"]');
-                if (closeButton) {
-                    closeButton.click();
+            if (startDate >= endDate) {
+                alert('End date must be after start date');
+                return;
+            }
+        }
+        
+        // Show loading state
+        const updateBtn = document.querySelector('#update-reservation-modal .btn-primary');
+        let originalText = 'Update';
+        if (updateBtn) {
+            originalText = updateBtn.textContent;
+            updateBtn.textContent = 'Updating...';
+            updateBtn.disabled = true;
+        }
+        
+        // Debug: Log what's being sent
+        console.log('=== FORM DATA CONTENTS ===');
+        
+        // Convert FormData to array to check length and iterate
+        const formDataArray = Array.from(formData.entries());
+        console.log('FormData entries count:', formDataArray.length);
+        console.log('Submitting update with data:');
+        formDataArray.forEach(([key, value]) => {
+            console.log(`FormData entry: ${key} = ${value}`);
+        });
+        
+        // Check if FormData is empty
+        if (formDataArray.length === 0) {
+            console.error('ERROR: FormData is empty! No data to send.');
+            alert('No form data collected. Please check the form fields.');
+            return;
+        }
+    
+        // Submit update request
+        fetch(`/my-reservation/${reservationId}`, {
+            method: 'POST', // Use POST with method spoofing (_method: 'PUT')
+            headers: {
+                'Accept': 'application/json'
+                // Don't set Content-Type - let the browser set it for FormData
+                // CSRF token is now in FormData
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                if (typeof showNotification_success !== 'undefined') {
+                    showNotification_success();
                 }
+                
+                // Close modal using Tailwind modal system
+                const modal = document.getElementById('update-reservation-modal');
+                if (modal) {
+                    // Find and click the close button
+                    const closeButton = modal.querySelector('[data-tw-dismiss="modal"]');
+                    if (closeButton) {
+                        closeButton.click();
+                    }
+                }
+                
+                // Refresh the page to show updated data
+                location.reload();
+            } else {
+                // Show error message
+                if (typeof showNotification_error !== 'undefined') {
+                    showNotification_error();
+                }
+                alert(data.message || 'Failed to update reservation');
             }
-            
-            // Refresh the page to show updated data
-            location.reload();
-        } else {
-            // Show error message
+        })
+        .catch(error => {
+            console.error('Error:', error);
             if (typeof showNotification_error !== 'undefined') {
                 showNotification_error();
             }
-            alert(data.message || 'Failed to update reservation');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        if (typeof showNotification_error !== 'undefined') {
-            showNotification_error();
-        }
-        alert('An error occurred while updating the reservation');
-    })
-    .finally(() => {
+            alert('An error occurred while updating the reservation');
+        })
+        .finally(() => {
+            // Reset button state
+            if (updateBtn) {
+                updateBtn.textContent = originalText;
+                updateBtn.disabled = false;
+            }
+        });
+    } catch (error) {
+        console.error('Error in submitUpdateForm:', error);
+        alert('An error occurred while processing the form: ' + error.message);
+        
         // Reset button state
+        const updateBtn = document.querySelector('#update-reservation-modal .btn-primary');
         if (updateBtn) {
-            updateBtn.textContent = originalText;
+            updateBtn.textContent = 'Update';
             updateBtn.disabled = false;
         }
-    });
+    }
 }
 
 // Set minimum dates for update form
