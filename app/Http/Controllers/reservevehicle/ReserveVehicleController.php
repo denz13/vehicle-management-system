@@ -11,6 +11,8 @@ use App\Models\tbl_reserve_vehicle;
 use App\Models\tbl_reserve_vehicle_passenger;
 use App\Models\tbl_reservation_type;
 use App\Models\User;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class ReserveVehicleController extends Controller
 {
@@ -158,9 +160,36 @@ class ReserveVehicleController extends Controller
                 'end_datetime' => $request->end_datetime,
                 'reason' => $request->reason,
                 'reservation_type_id' => $request->reservation_type_id,
-                'qrcode' => $this->generateQRCode(),
+                'qrcode' => null, // Will be updated after creation
                 'status' => 'pending'
             ]);
+
+            // Generate QR code with reservation details
+            $qrCodePath = $this->generateQRCode([
+                'id' => $reservation->id,
+                'vehicle_name' => $reservation->vehicle->vehicle_name ?? 'N/A',
+                'plate_number' => $reservation->vehicle->plate_number ?? 'N/A',
+                'destination' => $reservation->destination,
+                'start_datetime' => $reservation->start_datetime,
+                'end_datetime' => $reservation->end_datetime,
+                'driver' => $reservation->driver,
+                'requested_name' => $reservation->requested_name
+            ]);
+
+            // Log QR code generation result
+            \Log::info('QR Code generation result:', [
+                'reservation_id' => $reservation->id,
+                'qr_code_path' => $qrCodePath,
+                'endroid_available' => class_exists('\Endroid\QrCode\QrCode')
+            ]);
+
+            // Update reservation with QR code path
+            if ($qrCodePath) {
+                $reservation->update(['qrcode' => $qrCodePath]);
+                \Log::info('Reservation updated with QR code path: ' . $qrCodePath);
+            } else {
+                \Log::warning('Failed to generate QR code for reservation: ' . $reservation->id);
+            }
 
             // Add passengers
             if ($request->has('passengers') && is_array($request->passengers)) {
@@ -189,7 +218,8 @@ class ReserveVehicleController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Vehicle reserved successfully! Your reservation has been submitted for approval.',
-                'reservation_id' => $reservation->id
+                'reservation_id' => $reservation->id,
+                'qrcode_path' => $qrCodePath
             ]);
 
         } catch (\Exception $e) {
@@ -295,9 +325,73 @@ class ReserveVehicleController extends Controller
         }
     }
 
-    private function generateQRCode()
+    // Generate QR code for reservation
+    private function generateQRCode($reservationData = null)
     {
-        // Generate a unique QR code for the reservation
-        return 'QR_' . time() . '_' . rand(1000, 9999);
+        try {
+            if ($reservationData) {
+                // Create QR code content with reservation details
+                $qrContent = json_encode([
+                    'type' => 'vehicle_reservation',
+                    'reservation_id' => $reservationData['id'] ?? 'N/A',
+                    'vehicle_name' => $reservationData['vehicle_name'] ?? 'N/A',
+                    'plate_number' => $reservationData['plate_number'] ?? 'N/A',
+                    'destination' => $reservationData['destination'] ?? 'N/A',
+                    'start_datetime' => $reservationData['start_datetime'] ?? 'N/A',
+                    'end_datetime' => $reservationData['end_datetime'] ?? 'N/A',
+                    'driver' => $reservationData['driver'] ?? 'N/A',
+                    'requested_by' => $reservationData['requested_name'] ?? 'N/A',
+                    'timestamp' => now()->toISOString()
+                ]);
+            } else {
+                // Fallback content
+                $qrContent = json_encode([
+                    'type' => 'vehicle_reservation',
+                    'timestamp' => now()->toISOString()
+                ]);
+            }
+            
+            // Generate unique filename
+            $filename = 'qr_' . time() . '_' . uniqid() . '.png';
+            
+            // Store QR code in storage
+            $qrPath = 'qrcodes/' . $filename;
+            
+            // Generate actual QR code PNG using Endroid library
+            if (class_exists('\Endroid\QrCode\QrCode')) {
+                try {
+                    $qrCode = new \Endroid\QrCode\QrCode($qrContent);
+                    
+                    // Create writer for PNG format
+                    $writer = new \Endroid\QrCode\Writer\PngWriter();
+                    
+                    // Create result with default settings
+                    $result = $writer->write($qrCode);
+                    
+                    // Get PNG data
+                    $pngData = $result->getString();
+                    
+                    // Save PNG to storage
+                    \Storage::disk('public')->put($qrPath, $pngData);
+                    
+                    \Log::info('QR Code generated successfully using Endroid library');
+                } catch (\Exception $e) {
+                    \Log::error('Endroid QR Code generation failed: ' . $e->getMessage());
+                    // Fallback to text file
+                    \Storage::disk('public')->put($qrPath, $qrContent);
+                    \Log::info('QR Code generated as text file (Endroid failed)');
+                }
+            } else {
+                // Fallback: create text file if library not available
+                \Storage::disk('public')->put($qrPath, $qrContent);
+                \Log::info('QR Code generated as text file (Endroid library not available)');
+            }
+            
+            return $qrPath;
+            
+        } catch (\Exception $e) {
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
+            return null;
+        }
     }
 }

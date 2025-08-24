@@ -166,7 +166,7 @@
                     <div class="grid grid-cols-12 gap-4 mb-6">
                         <div class="col-span-12">
                             <h3 class="text-lg font-medium mb-3 text-primary">Basic Information</h3>
-                        </div>
+                                </div>
                         
                         <div class="col-span-12 md:col-span-6">
                             <label for="driver" class="form-label">Driver <span class="text-danger">*</span></label>
@@ -177,13 +177,13 @@
                                 @endforeach
                             </select>
                             <div class="text-danger text-xs mt-1" id="driver_error"></div>
-                        </div>
+                                </div>
                         
                         <div class="col-span-12 md:col-span-6">
                             <label for="start_datetime" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
                             <input id="start_datetime" name="start_datetime" type="datetime-local" class="form-control" required>
                             <div class="text-danger text-xs mt-1" id="start_datetime_error"></div>
-                        </div>
+                            </div>
                         
                         <div class="col-span-12 md:col-span-6">
                             <label for="end_datetime" class="form-label">End Date & Time <span class="text-danger">*</span></label>
@@ -279,8 +279,8 @@
                             />
                             
                             <span class="font-medium">Note:</span> Select one or more passengers from the list. You can search and select multiple users.
-                        </div>
-                    </div>
+                                </div>
+                            </div>
                     
                 </form>
                         </div>
@@ -288,11 +288,28 @@
                 <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-20 mr-1">Cancel</button>
                 <button type="button" class="btn btn-success w-20" onclick="submitReservation()">Reserve</button>
                 <button type="button" class="btn btn-warning btn-sm" onclick="testSubmitFunction()">Test Function</button>
-            </div>
+                                </div>
                             </div>
                         </div>
                                     </div>
 <!-- END: Reserve Vehicle Modal -->
+
+<!-- BEGIN: QR Code Modal -->
+<div id="qr-code-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="font-medium text-base mr-auto">Reservation QR Code</h2>
+            </div>
+            <div class="modal-body">
+                <div id="qr-code-content">
+                    <!-- QR code content will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: QR Code Modal -->
 
 <!-- BEGIN: Notification Toasts -->
 <x-notification-toast 
