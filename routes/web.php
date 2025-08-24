@@ -8,6 +8,7 @@ use App\Http\Controllers\PositionManagement\PositionManagementController;
 use App\Http\Controllers\DepartmentManagement\DepartmentManagementController;
 use App\Http\Controllers\VehicleManagement\VehicleManagementController;
 use App\Http\Controllers\ReserveVehicle\ReserveVehicleController;
+use App\Http\Controllers\MyReservation\MyReservationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -99,6 +100,16 @@ Route::middleware('auth')->group(function() {
             ], 500);
         }
     })->name('users.index');
-    
+
+    // My Reservation
+    Route::get('my-reservation', [MyReservationController::class, 'index'])->name('my-reservation');
+    Route::get('my-reservation/reservations', [MyReservationController::class, 'getReservations'])->name('my-reservation.reservations');
+    Route::get('my-reservation/data', [MyReservationController::class, 'getReservations'])->name('my-reservation.data');
+    Route::get('my-reservation/{id}', [MyReservationController::class, 'show'])->name('my-reservation.show');
+    Route::post('my-reservation', [MyReservationController::class, 'store'])->name('my-reservation.store');
+    Route::get('my-reservation/{id}/edit', [MyReservationController::class, 'edit'])->name('my-reservation.edit');
+    Route::put('my-reservation/{id}', [MyReservationController::class, 'update'])->name('my-reservation.update');
+    Route::delete('my-reservation/{id}', [MyReservationController::class, 'destroy'])->name('my-reservation.destroy');
+    Route::post('my-reservation/{id}/cancel', [MyReservationController::class, 'cancelReservation'])->name('my-reservation.cancel');
 });
 

@@ -186,6 +186,12 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('my-reservation') }}" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="user-check"></i> </div>
+                <div class="side-menu__title"> My Reservation </div>
+            </a>
+        </li>
+        <li>
             <a href="side-menu-light-file-manager.html" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="hard-drive"></i> </div>
                 <div class="side-menu__title"> File Manager </div>

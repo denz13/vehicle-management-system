@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\tbl_reserve_vehicle_passenger;
+use App\Models\tbl_vehicle;
+use App\Models\tbl_user;
+use App\Models\tbl_reservation_type;
 
 class tbl_reserve_vehicle extends Model
 {
@@ -27,6 +31,11 @@ class tbl_reserve_vehicle extends Model
     public function reservation_type()
     {
         return $this->belongsTo(tbl_reservation_type::class, 'reservation_type_id');
+    }
+    
+    public function passengers()
+    {
+        return $this->hasMany(tbl_reserve_vehicle_passenger::class, 'reserve_vehicle_id');
     }
         
 }
