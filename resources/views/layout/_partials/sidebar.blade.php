@@ -89,6 +89,23 @@
         </li>
         <li>
             <a href="javascript:;" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__title">
+                    Reservation Type 
+                    <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
+                </div>
+            </a>
+            <ul class="">
+                <li>
+                    <a href="{{ route('reservation-type') }}" class="side-menu">
+                        <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
+                        <div class="side-menu__title"> Create Reservation Type </div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;" class="side-menu">
                 <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
                 <div class="side-menu__title">
                     E-Commerce 
@@ -198,9 +215,9 @@
             </a>
         </li>
         <li>
-            <a href="side-menu-light-file-manager.html" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="hard-drive"></i> </div>
-                <div class="side-menu__title"> File Manager </div>
+            <a href="{{ route('drivers-calendar') }}" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="calendar"></i> </div>
+                <div class="side-menu__title"> Drivers Calendar </div>
             </a>
         </li>
         <li>

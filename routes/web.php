@@ -10,6 +10,8 @@ use App\Http\Controllers\VehicleManagement\VehicleManagementController;
 use App\Http\Controllers\ReserveVehicle\ReserveVehicleController;
 use App\Http\Controllers\MyReservation\MyReservationController;
 use App\Http\Controllers\vehiclemanagement\ListRequestReserveController;
+use App\Http\Controllers\ReservationType\ReservationTypeController;
+use App\Http\Controllers\DriversCalendar\DriversCalenderController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -126,5 +128,16 @@ Route::middleware('auth')->group(function() {
     // Approve and decline reservations
     Route::post('vehicle-management/approve-reservation/{id}', [ListRequestReserveController::class, 'approveReservation'])->name('list-request-reserve.approve');
     Route::post('vehicle-management/decline-reservation/{id}', [ListRequestReserveController::class, 'declineReservation'])->name('list-request-reserve.decline');
+    
+    // Reservation Type Management
+    Route::post('reservation-type', [ReservationTypeController::class, 'store'])->name('reservation-type.store');
+    Route::get('reservation-type', [ReservationTypeController::class, 'index'])->name('reservation-type');
+    Route::get('reservation-type/reservation-types', [ReservationTypeController::class, 'getReservationTypes'])->name('reservation-type.reservation-types');
+    Route::get('reservation-type/{id}/edit', [ReservationTypeController::class, 'edit'])->name('reservation-type.edit');
+    Route::put('reservation-type/{id}', [ReservationTypeController::class, 'update'])->name('reservation-type.update');
+    Route::delete('reservation-type/{id}', [ReservationTypeController::class, 'destroy'])->name('reservation-type.destroy');
+
+    // Drivers Calendar Management
+    Route::get('drivers-calendar', [DriversCalenderController::class, 'index'])->name('drivers-calendar');
 });
 
