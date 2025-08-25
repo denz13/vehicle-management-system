@@ -220,6 +220,7 @@ class MyReservationController extends Controller
                 'status' => $reservation->status,
                 'requested_by' => $reservation->user->name ?? 'N/A',
                 'qrcode' => $reservation->qrcode,
+                'remarks' => $reservation->remarks,
                 'passengers' => $passengers->map(function($passenger) {
                     return [
                         'id' => $passenger->passenger_id,

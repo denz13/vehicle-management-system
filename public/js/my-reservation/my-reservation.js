@@ -358,6 +358,22 @@ function populateDetailsModal(reservation) {
         });
     }
     
+    // Handle remarks display based on status
+    const remarksRow = document.getElementById('remarks-row');
+    if (remarksRow) {
+        if (reservation.status === 'rejected' && reservation.remarks) {
+            // Show remarks row and populate with rejection remarks
+            remarksRow.style.display = '';
+            const rejectionRemarks = document.getElementById('details-rejection-remarks');
+            if (rejectionRemarks) {
+                rejectionRemarks.textContent = reservation.remarks;
+            }
+        } else {
+            // Hide remarks row for non-rejected statuses
+            remarksRow.style.display = 'none';
+        }
+    }
+    
     // Status with color coding
     const statusElement = document.getElementById('details-status');
     if (statusElement) {
