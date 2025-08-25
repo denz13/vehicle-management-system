@@ -15,6 +15,7 @@ use App\Http\Controllers\DriversCalendar\DriversCalenderController;
 use App\Http\Controllers\ScanQrcode\ScanQrcodeController;
 use App\Http\Controllers\Chat\ChatController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\LiveTracking\LiveTrackingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -167,9 +168,20 @@ Route::middleware('auth')->group(function() {
     // Post
     Route::get('post', [PostController::class, 'index'])->name('post');
     Route::get('post/get-posts', [PostController::class, 'getPosts'])->name('post.get-posts');
-    Route::post('post/create-post', [PostController::class, 'createPost'])->name('post.create-post');
-    Route::post('post/update-post', [PostController::class, 'updatePost'])->name('post.update-post');
-    Route::post('post/delete-post', [PostController::class, 'deletePost'])->name('post.delete-post');
+    Route::post('post', [PostController::class, 'store'])->name('post.store');
+    Route::get('post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::post('post/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::delete('post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+
+    // Live Tracking
+    Route::get('live-tracking', [LiveTrackingController::class, 'index'])->name('live-tracking');
+    Route::get('live-tracking/get-vehicles', [LiveTrackingController::class, 'getVehicles'])->name('live-tracking.get-vehicles');
+    Route::get('live-tracking/get-drivers', [LiveTrackingController::class, 'getDrivers'])->name('live-tracking.get-drivers');
+    Route::get('live-tracking/get-schedules', [LiveTrackingController::class, 'getSchedules'])->name('live-tracking.get-schedules');
+    Route::get('live-tracking/get-qr-codes', [LiveTrackingController::class, 'getQrCodes'])->name('live-tracking.get-qr-codes');
+    Route::get('live-tracking/get-reservations', [LiveTrackingController::class, 'getReservations'])->name('live-tracking.get-reservations');
+    Route::get('live-tracking/get-users', [LiveTrackingController::class, 'getUsers'])->name('live-tracking.get-users');
+    Route::get('live-tracking/get-conversations', [LiveTrackingController::class, 'getConversations'])->name('live-tracking.get-conversations');
 
 });
 

@@ -61,10 +61,16 @@
                 <div class="side-menu__title"> Post </div>
             </a>
         </li>
+        <li>
+            <a href="{{ route('live-tracking') }}" class="side-menu">
+                <div class="side-menu__icon"> <i data-lucide="map"></i> </div>
+                <div class="side-menu__title"> Live Tracking </div>
+            </a>
+        </li>
         <li class="side-nav__devider my-6"></li>
         <li>
             <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__icon"> <i data-lucide="folder"></i> </div>
                 <div class="side-menu__title">
                     Position Management 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
@@ -81,7 +87,7 @@
         </li>
         <li>
             <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__icon"> <i data-lucide="edit"></i> </div>
                 <div class="side-menu__title">
                     Department Management 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
@@ -98,7 +104,7 @@
         </li>
         <li>
             <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__icon"> <i data-lucide="car"></i> </div>
                 <div class="side-menu__title">
                     Vehicle Management 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
@@ -121,7 +127,7 @@
         </li>
         <li>
             <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="box"></i> </div>
+                <div class="side-menu__icon"> <i data-lucide="list"></i> </div>
                 <div class="side-menu__title">
                     Reservation Type 
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
