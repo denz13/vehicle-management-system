@@ -12,6 +12,7 @@ use App\Http\Controllers\MyReservation\MyReservationController;
 use App\Http\Controllers\vehiclemanagement\ListRequestReserveController;
 use App\Http\Controllers\ReservationType\ReservationTypeController;
 use App\Http\Controllers\DriversCalendar\DriversCalenderController;
+use App\Http\Controllers\ScanQrcode\ScanQrcodeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -139,5 +140,14 @@ Route::middleware('auth')->group(function() {
 
     // Drivers Calendar Management
     Route::get('drivers-calendar', [DriversCalenderController::class, 'index'])->name('drivers-calendar');
+
+    // Scan QR Code Management
+    Route::get('scan-qrcode', [ScanQrcodeController::class, 'index'])->name('scan-qrcode');
+    Route::post('scan-qrcode/scan', [ScanQrcodeController::class, 'scanQrCode'])->name('scan-qrcode.scan');
+    Route::post('scan-qrcode/mark-departure', [ScanQrcodeController::class, 'markDeparture'])->name('scan-qrcode.departure');
+    Route::post('scan-qrcode/mark-arrival', [ScanQrcodeController::class, 'markArrival'])->name('scan-qrcode.arrival');
+    Route::get('scan-qrcode/get-qr-image/{id}', [ScanQrcodeController::class, 'getQrImage'])->name('scan-qrcode.get-qr-image');
+    Route::get('scan-qrcode/get-schedule/{id}', [ScanQrcodeController::class, 'getSchedule'])->name('scan-qrcode.get-schedule');
+    Route::get('scan-qrcode/debug', [ScanQrcodeController::class, 'debugQrCodes'])->name('scan-qrcode.debug');
 });
 
