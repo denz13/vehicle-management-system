@@ -18,8 +18,8 @@
                 @forelse($driverSchedules as $schedule)
                 <div class="relative">
                     <div class="event p-3 -mx-3 cursor-pointer transition duration-300 ease-in-out hover:bg-slate-100 dark:hover:bg-darkmode-400 rounded-md flex items-center" 
-                         data-event-id="{{ $schedule->id }}" 
-                         onclick="showEventDetails({{ $schedule->id }})">
+                        data-event-id="{{ $schedule->id }}" 
+                        onclick="showEventDetails({{ $schedule->id }})">
                         <div class="w-2 h-2 rounded-full mr-3" style="background-color: {{ $schedule->status === 'approved' ? '#10b981' : '#f59e0b' }}"></div>
                         <div class="pr-10">
                             <div class="event__title truncate">
