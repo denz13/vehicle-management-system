@@ -21,7 +21,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'department_id',
+        'position_id',
+        'date_of_birth',
+        'gender',
+        'photo',
+        'contact_number',
+        'address',
+        'active',
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(tbl_department::class, 'department_id');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(tbl_position::class, 'position_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -56,8 +74,8 @@ class User extends Authenticatable
      */
     public function getPhotoUrlAttribute()
     {
-        if ($this->foto !== null) {
-            return url('media/user/' . $this->id . '/' . $this->foto);
+        if ($this->photo !== null) {
+            return url('storage/' . $this->photo);
         } else {
             return url('media-example/no-image.png');
         }
