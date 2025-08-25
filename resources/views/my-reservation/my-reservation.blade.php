@@ -212,6 +212,7 @@
                                             <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">DESCRIPTION</th>
                                             <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">DETAILS</th>
                                             <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">DATE & TIME</th>
+                                            <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">REMARKS</th>
                                             <th class="border-b-2 dark:border-darkmode-400 text-right whitespace-nowrap">STATUS</th>
                                         </tr>
                                     </thead>
@@ -223,6 +224,7 @@
                                             </td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32">-</td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-start-datetime">Start Time</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-start-remarks">-</td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32 font-medium" id="details-start-status">Scheduled</td>
                                         </tr>
                                         <tr>
@@ -232,6 +234,7 @@
                                             </td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32">-</td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-end-datetime">End Time</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-end-remarks">-</td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32 font-medium" id="details-end-status">Scheduled</td>
                                         </tr>
                                         <tr>
@@ -241,7 +244,8 @@
                                             </td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-reason-details">Reason</td>
                                             <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-reason">Reason</td>
-                                            <td class="text-right border-b dark:border-darkmode-400 w-32 font-medium">Active</td>
+                                            <td class="text-right border-b dark:border-darkmode-400 w-32" id="details-reason-remarks">-</td>
+                                            <td class="border-b dark:border-darkmode-400 text-right w-32 font-medium">Active</td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -253,7 +257,19 @@
                                                 <div id="details-longitude">Longitude</div>
                                                 <div id="details-latitude">Latitude</div>
                                             </td>
+                                            <td class="text-right w-32" id="details-coordinates-remarks">-</td>
                                             <td class="text-right w-32 font-medium">Set</td>
+                                        </tr>
+                                        <!-- Remarks row - only show when status is rejected -->
+                                        <tr id="remarks-row" style="display: none;">
+                                            <td>
+                                                <div class="font-medium whitespace-nowrap">Rejection Remarks</div>
+                                                <div class="text-slate-500 text-sm mt-0.5 whitespace-nowrap">Reason for rejection</div>
+                                            </td>
+                                            <td class="text-right w-32">-</td>
+                                            <td class="text-right w-32">-</td>
+                                            <td class="text-right w-32" id="details-rejection-remarks">-</td>
+                                            <td class="text-right w-32 font-medium text-danger">Rejected</td>
                                         </tr>
                                     </tbody>
                                 </table>
