@@ -13,6 +13,8 @@ use App\Http\Controllers\vehiclemanagement\ListRequestReserveController;
 use App\Http\Controllers\ReservationType\ReservationTypeController;
 use App\Http\Controllers\DriversCalendar\DriversCalenderController;
 use App\Http\Controllers\ScanQrcode\ScanQrcodeController;
+use App\Http\Controllers\Chat\ChatController;
+use App\Http\Controllers\Post\PostController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -153,5 +155,21 @@ Route::middleware('auth')->group(function() {
     Route::get('scan-qrcode/get-qr-image/{id}', [ScanQrcodeController::class, 'getQrImage'])->name('scan-qrcode.get-qr-image');
     Route::get('scan-qrcode/get-schedule/{id}', [ScanQrcodeController::class, 'getSchedule'])->name('scan-qrcode.get-schedule');
     Route::get('scan-qrcode/debug', [ScanQrcodeController::class, 'debugQrCodes'])->name('scan-qrcode.debug');
+
+    // Chat
+    Route::get('chat', [ChatController::class, 'index'])->name('chat');
+    Route::get('chat/get-users', [ChatController::class, 'getUsers'])->name('chat.get-users');
+    Route::get('chat/get-conversations', [ChatController::class, 'getConversations'])->name('chat.get-conversations');
+    Route::post('chat/get-messages', [ChatController::class, 'getMessages'])->name('chat.get-messages');
+    Route::post('chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.send-message');
+    Route::post('chat/mark-as-read', [ChatController::class, 'markAsRead'])->name('chat.mark-as-read');
+
+    // Post
+    Route::get('post', [PostController::class, 'index'])->name('post');
+    Route::get('post/get-posts', [PostController::class, 'getPosts'])->name('post.get-posts');
+    Route::post('post/create-post', [PostController::class, 'createPost'])->name('post.create-post');
+    Route::post('post/update-post', [PostController::class, 'updatePost'])->name('post.update-post');
+    Route::post('post/delete-post', [PostController::class, 'deletePost'])->name('post.delete-post');
+
 });
 

@@ -74,10 +74,25 @@ class User extends Authenticatable
      */
     public function getPhotoUrlAttribute()
     {
-        if ($this->photo !== null) {
-            return url('storage/' . $this->photo);
+        if ($this->photo !== null && $this->photo !== '') {
+            // Check if the photo path already includes 'profiles/' or if it's just the filename
+            if (strpos($this->photo, 'profiles/') === 0) {
+                // If it already includes 'profiles/', use it as is
+                $photoUrl = url('storage/' . $this->photo);
+            } else {
+                // If it's just the filename, prepend 'profiles/'
+                $photoUrl = url('storage/profiles/' . $this->photo);
+            }
+            
+            // Debug logging (you can remove this later)
+            \Log::info("User {$this->id} photo: {$this->photo} -> {$photoUrl}");
+            
+            return $photoUrl;
         } else {
-            return url('media-example/no-image.png');
+            // Return default image if no photo is set
+            $defaultPhoto = asset('dist/images/profile-11.jpg');
+            \Log::info("User {$this->id} using default photo: {$defaultPhoto}");
+            return $defaultPhoto;
         }
     }
 }
