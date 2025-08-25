@@ -202,43 +202,43 @@
                                         
                                         <!-- Dynamic profile content (hidden by default) -->
                                         <div id="dynamic-profile-content" class="hidden">
-                                            <div class="box px-5 py-10 mt-5">
-                                                <div class="w-20 h-20 flex-none image-fit rounded-full overflow-hidden mx-auto">
+                                        <div class="box px-5 py-10 mt-5">
+                                            <div class="w-20 h-20 flex-none image-fit rounded-full overflow-hidden mx-auto">
                                                     <img id="profile-photo" alt="Profile" src="dist/images/profile-11.jpg">
-                                                </div>
-                                                <div class="text-center mt-3">
+                                            </div>
+                                            <div class="text-center mt-3">
                                                     <div id="profile-name" class="font-medium text-lg">User Name</div>
                                                     <div id="profile-status" class="text-slate-500 mt-1">Online</div>
-                                                </div>
                                             </div>
-                                            <div class="box p-5 mt-5">
-                                                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5">
-                                                    <div>
+                                        </div>
+                                        <div class="box p-5 mt-5">
+                                            <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5">
+                                                <div>
                                                         <div class="text-slate-500">User ID</div>
                                                         <div id="profile-user-id" class="mt-1">-</div>
-                                                    </div>
+                                                </div>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="hash" data-lucide="hash" class="lucide lucide-hash w-4 h-4 text-slate-500 ml-auto">
                                                         <path d="M4 9h16"></path>
                                                         <path d="M4 15h16"></path>
                                                         <path d="M10 3L8 21"></path>
                                                         <path d="M16 3l2 18"></path>
                                                     </svg>
-                                                </div>
-                                                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 py-5">
-                                                    <div>
+                                            </div>
+                                            <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 py-5">
+                                                <div>
                                                         <div class="text-slate-500">Email</div>
                                                         <div id="profile-email" class="mt-1">-</div>
-                                                    </div>
+                                                </div>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="mail" data-lucide="mail" class="lucide lucide-mail w-4 h-4 text-slate-500 ml-auto">
                                                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                                         <polyline points="22,6 12,13 2,6"></polyline>
                                                     </svg>
-                                                </div>
-                                                <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 py-5">
-                                                    <div>
+                                            </div>
+                                            <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 py-5">
+                                                <div>
                                                         <div class="text-slate-500">Role</div>
                                                         <div id="profile-role" class="mt-1">-</div>
-                                                    </div>
+                                                </div>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="shield" data-lucide="shield" class="lucide lucide-shield w-4 h-4 text-slate-500 ml-auto">
                                                         <path d="M20 13c0 5-3.5 7.5-8 7.5s-8-2.5-8-7.5c0-5 3.5-7.5 8-7.5s8 2.5 8 7.5z"></path>
                                                         <path d="M9 9l.01 0"></path>
@@ -247,12 +247,12 @@
                                                         <path d="M12 12l.01 0"></path>
                                                         <path d="M12 15l.01 0"></path>
                                                     </svg>
-                                                </div>
-                                                <div class="flex items-center pt-5">
-                                                    <div>
+                                            </div>
+                                            <div class="flex items-center pt-5">
+                                                <div>
                                                         <div class="text-slate-500">Department</div>
                                                         <div id="profile-department" class="mt-1">-</div>
-                                                    </div>
+                                                </div>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="building" data-lucide="building" class="lucide lucide-building w-4 h-4 text-slate-500 ml-auto">
                                                         <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                                                         <rect x="9" y="9" width="1" height="1"></rect>
@@ -542,5 +542,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/chat/chat.js') }}"></script>
+    <script src="{{ asset('js/chat/chat.js') }}"></script>
 @endpush
