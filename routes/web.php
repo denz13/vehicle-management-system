@@ -43,6 +43,10 @@ Route::middleware('auth')->group(function() {
 
     // Profile Management
     Route::get('profile-management', [ProfileManagementController::class, 'index'])->name('profile-management');
+    Route::post('profile-management/update', [ProfileManagementController::class, 'update'])->name('profile-management.update');
+    Route::post('profile-management/change-password', [ProfileManagementController::class, 'changePassword'])->name('profile-management.change-password');
+    Route::get('profile-management/profile', [ProfileManagementController::class, 'getProfile'])->name('profile-management.profile');
+    Route::post('profile-management/upload-photo', [ProfileManagementController::class, 'uploadPhoto'])->name('profile-management.upload-photo');
 
     // Position Management
     Route::get('position-management', [PositionManagementController::class, 'index'])->name('position-management');
@@ -88,7 +92,7 @@ Route::middleware('auth')->group(function() {
                 ->map(function($user) {
                     return [
                         'id' => $user->id,
-                        'name' => $user->name ?: $user->email ?: "User {$user->id}",
+                        'name' => $user->name ?: ($user->email ?: "User {$user->id}"),
                         'email' => $user->email
                     ];
                 });

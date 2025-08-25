@@ -1,394 +1,435 @@
 @extends('layout._partials.master')
 
 @section('content')
+<!-- Hidden user data for JavaScript -->
+<div data-user-data style="display: none;">
+    {
+        "name": "{{ auth()->user()->name }}",
+        "email": "{{ auth()->user()->email }}",
+        "contact_number": "{{ auth()->user()->contact_number }}",
+        "address": "{{ auth()->user()->address }}",
+        "date_of_birth": "{{ auth()->user()->date_of_birth }}",
+        "gender": "{{ auth()->user()->gender }}"
+    }
+</div>
 <div class="intro-y flex items-center mt-8">
-                        <h2 class="text-lg font-medium mr-auto">
-                            Profile Layout
-                        </h2>
+    <h2 class="text-lg font-medium mr-auto">
+        Profile Management
+    </h2>
+</div>
+<div class="intro-y box px-5 pt-5 mt-5">
+    <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+        <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
+                @if(auth()->user()->photo_url)
+                    <img alt="Profile Photo" class="rounded-full w-full h-full object-cover" src="{{ auth()->user()->photo_url }}">
+                @else
+                    <div class="w-full h-full bg-slate-200 rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
                     </div>
-                    <div class="intro-y box px-5 pt-5 mt-5">
-                        <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
-                            <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
-                                    <img alt="Midone - HTML Admin Template" class="rounded-full" src="dist/images/profile-11.jpg">
-                                    <div class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="camera" class="lucide lucide-camera w-4 h-4 text-white" data-lucide="camera"><path d="M14.5 4h-5L7 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg> </div>
-                                </div>
-                                <div class="ml-5">
-                                    <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">Angelina Jolie</div>
-                                    <div class="text-slate-500">Software Engineer</div>
-                                </div>
-                            </div>
-                            <div class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
-                                <div class="font-medium text-center lg:text-left lg:mt-3">Contact Details</div>
-                                <div class="flex flex-col justify-center items-center lg:items-start mt-4">
-                                    <div class="truncate sm:whitespace-normal flex items-center"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="mail" data-lucide="mail" class="lucide lucide-mail w-4 h-4 mr-2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> angelinajolie@left4code.com </div>
-                                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="instagram" data-lucide="instagram" class="lucide lucide-instagram w-4 h-4 mr-2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram Angelina Jolie </div>
-                                    <div class="truncate sm:whitespace-normal flex items-center mt-3"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="twitter" data-lucide="twitter" class="lucide lucide-twitter w-4 h-4 mr-2"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5 0-.28-.03-.56-.08-.83A7.72 7.72 0 0023 3z"></path></svg> Twitter Angelina Jolie </div>
-                                </div>
-                            </div>
-                            <div class="mt-6 lg:mt-0 flex-1 px-5 border-t lg:border-0 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0">
-                                <div class="font-medium text-center lg:text-left lg:mt-5">Sales Growth</div>
-                                <div class="flex items-center justify-center lg:justify-start mt-2">
-                                    <div class="mr-2 w-20 flex"> USP: <span class="ml-3 font-medium text-success">+23%</span> </div>
-                                    <div class="w-3/4">
-                                        <div class="h-[55px]">
-                                            <canvas class="simple-line-chart-1 -mr-5" width="213" height="55" style="display: block; box-sizing: border-box; height: 55px; width: 213px;"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-center lg:justify-start">
-                                    <div class="mr-2 w-20 flex"> STP: <span class="ml-3 font-medium text-danger">-2%</span> </div>
-                                    <div class="w-3/4">
-                                        <div class="h-[55px]">
-                                            <canvas class="simple-line-chart-2 -mr-5" width="213" height="55" style="display: block; box-sizing: border-box; height: 55px; width: 213px;"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                @endif
+                <div class="absolute mb-1 mr-1 flex items-center justify-center bottom-0 right-0 bg-primary rounded-full p-2 cursor-pointer" onclick="document.getElementById('profile-photo-input').click()"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera w-4 h-4 text-white" data-lucide="camera">
+                        <path d="M14.5 4h-5L7 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2h-3l-2.5-3z"></path>
+                        <circle cx="12" cy="13" r="3"></circle>
+                    </svg> 
+                </div>
+                <input type="file" id="profile-photo-input" accept="image/*" style="display: none;" onchange="confirmPhotoUpload(this)">
+            </div>
+            <div class="ml-5">
+                <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">{{ auth()->user()->name }}</div>
+                <div class="text-slate-500">{{ auth()->user()->position ? auth()->user()->position->position_name : 'No Position' }}</div>
+                <div class="text-slate-400 text-sm">{{ auth()->user()->department ? auth()->user()->department->department_name : 'No Department' }}</div>
+            </div>
+        </div>
+        <div class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
+            <div class="font-medium text-center lg:text-left lg:mt-3">Contact Details</div>
+            <div class="flex flex-col justify-center items-center lg:items-start mt-4">
+                <div class="truncate sm:whitespace-normal flex items-center"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-4 h-4 mr-2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg> 
+                    {{ auth()->user()->email }}
+                </div>
+                @if(auth()->user()->contact_number)
+                <div class="truncate sm:whitespace-normal flex items-center mt-3"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone w-4 h-4 mr-2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg> 
+                    {{ auth()->user()->contact_number }}
+                </div>
+                @endif
+                @if(auth()->user()->address)
+                <div class="truncate sm:whitespace-normal flex items-center mt-3"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin w-4 h-4 mr-2">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg> 
+                    {{ auth()->user()->address }}
+                </div>
+                @endif
+            </div>
+        </div>
+        <div class="mt-6 lg:mt-0 flex-1 px-5 border-t lg:border-0 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0">
+            <div class="font-medium text-center lg:text-left lg:mt-5">Personal Information</div>
+            <div class="flex flex-col justify-center items-center lg:items-start mt-4">
+                @if(auth()->user()->date_of_birth)
+                <div class="truncate sm:whitespace-normal flex items-center"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar w-4 h-4 mr-2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg> 
+                    {{ \Carbon\Carbon::parse(auth()->user()->date_of_birth)->format('M d, Y') }}
+                </div>
+                @endif
+                @if(auth()->user()->gender)
+                <div class="truncate sm:whitespace-normal flex items-center mt-3"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user w-4 h-4 mr-2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg> 
+                    {{ ucfirst(auth()->user()->gender) }}
+                </div>
+                @endif
+                <div class="truncate sm:whitespace-normal flex items-center mt-3"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle w-4 h-4 mr-2 {{ auth()->user()->active ? 'text-success' : 'text-danger' }}">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg> 
+                    Status: <span class="ml-1 {{ auth()->user()->active ? 'text-success' : 'text-danger' }}">{{ auth()->user()->active ? 'Active' : 'Inactive' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
+        <li id="dashboard-tab" class="nav-item" role="presentation"> 
+            <a href="javascript:;" class="nav-link py-4 active" data-tw-target="#dashboard" aria-controls="dashboard" aria-selected="true" role="tab"> Information </a> 
+        </li>
+        <li id="activities-tab" class="nav-item" role="presentation"> 
+            <a href="javascript:;" class="nav-link py-4" data-tw-target="#activities" aria-selected="false" role="tab"> Change Password </a> 
+        </li>
+    </ul>
+</div>
+<div class="intro-y tab-content mt-5">
+    <div id="dashboard" class="tab-pane active" role="tabpanel" aria-labelledby="dashboard-tab">
+        <div class="grid grid-cols-12 gap-6">
+            <!-- BEGIN: User Information -->
+            <div class="intro-y box col-span-12 lg:col-span-6">
+                <div class="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                    <h2 class="font-medium text-base mr-auto">
+                        User Information
+                    </h2>
+                    <button class="btn btn-primary btn-sm" onclick="editProfile()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit w-4 h-4 mr-1">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Edit Profile
+                    </button>
+                </div>
+                <div class="p-5">
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Name:</span>
+                            <span class="ml-3">{{ auth()->user()->name }}</span>
                         </div>
-                        <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
-                            <li id="dashboard-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4 active" data-tw-target="#dashboard" aria-controls="dashboard" aria-selected="true" role="tab"> Dashboard </a> </li>
-                            <li id="account-and-profile-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4" data-tw-target="#account-and-profile" aria-selected="false" role="tab"> Account &amp; Profile </a> </li>
-                            <li id="activities-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4" data-tw-target="#activities" aria-selected="false" role="tab"> Activities </a> </li>
-                            <li id="tasks-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-4" data-tw-target="#tasks" aria-selected="false" role="tab"> Tasks </a> </li>
-                        </ul>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Email:</span>
+                            <span class="ml-3">{{ auth()->user()->email }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Department:</span>
+                            <span class="ml-3">{{ auth()->user()->department ? auth()->user()->department->department_name : 'Not Assigned' }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Position:</span>
+                            <span class="ml-3">{{ auth()->user()->position ? auth()->user()->position->position_name : 'Not Assigned' }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Date of Birth:</span>
+                            <span class="ml-3">{{ auth()->user()->date_of_birth ? \Carbon\Carbon::parse(auth()->user()->date_of_birth)->format('M d, Y') : 'Not Set' }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Gender:</span>
+                            <span class="ml-3">{{ auth()->user()->gender ? ucfirst(auth()->user()->gender) : 'Not Set' }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Contact:</span>
+                            <span class="ml-3">{{ auth()->user()->contact_number ?: 'Not Set' }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Address:</span>
+                            <span class="ml-3">{{ auth()->user()->address ?: 'Not Set' }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium w-24">Status:</span>
+                            <span class="ml-3 {{ auth()->user()->active ? 'text-success' : 'text-danger' }}">
+                                {{ auth()->user()->active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
+                        
                     </div>
-                    <div class="intro-y tab-content mt-5">
-                        <div id="dashboard" class="tab-pane active" role="tabpanel" aria-labelledby="dashboard-tab">
-                            <div class="grid grid-cols-12 gap-6">
-                                <!-- BEGIN: Top Categories -->
-                                <div class="intro-y box col-span-12 lg:col-span-6">
-                                    <div class="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                                        <h2 class="font-medium text-base mr-auto">
-                                            Top Categories
-                                        </h2>
-                                        <div class="dropdown ml-auto">
-                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;" aria-expanded="false" data-tw-toggle="dropdown"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="more-horizontal" data-lucide="more-horizontal" class="lucide lucide-more-horizontal w-5 h-5 text-slate-500"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg> </a>
-                                            <div class="dropdown-menu w-40">
-                                                <ul class="dropdown-content">
-                                                    <li>
-                                                        <a href="" class="dropdown-item"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="plus" data-lucide="plus" class="lucide lucide-plus w-4 h-4 mr-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Category </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="" class="dropdown-item"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="settings" data-lucide="settings" class="lucide lucide-settings w-4 h-4 mr-2"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg> Settings </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="flex flex-col sm:flex-row">
-                                            <div class="mr-auto">
-                                                <a href="" class="font-medium">Wordpress Template</a> 
-                                                <div class="text-slate-500 mt-1">HTML, PHP, Mysql</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-32 -ml-2 sm:ml-0 mt-5 mr-auto sm:mr-5">
-                                                    <div class="h-[30px]">
-                                                        <canvas class="simple-line-chart-1" data-random="true" width="96" height="30" style="display: block; box-sizing: border-box; height: 30px; width: 96px;"></canvas>
-                                                    </div>
-                                                </div>
-                                                <div class="text-center">
-                                                    <div class="font-medium">6.5k</div>
-                                                    <div class="bg-success/20 text-success rounded px-2 mt-1.5">+150</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-col sm:flex-row mt-5">
-                                            <div class="mr-auto">
-                                                <a href="" class="font-medium">Bootstrap HTML Template</a> 
-                                                <div class="text-slate-500 mt-1">HTML, PHP, Mysql</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-32 -ml-2 sm:ml-0 mt-5 mr-auto sm:mr-5">
-                                                    <div class="h-[30px]">
-                                                        <canvas class="simple-line-chart-1" data-random="true" width="96" height="30" style="display: block; box-sizing: border-box; height: 30px; width: 96px;"></canvas>
-                                                    </div>
-                                                </div>
-                                                <div class="text-center">
-                                                    <div class="font-medium">2.5k</div>
-                                                    <div class="bg-pending/10 text-pending rounded px-2 mt-1.5">+150</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-col sm:flex-row mt-5">
-                                            <div class="mr-auto">
-                                                <a href="" class="font-medium">Tailwind HTML Template</a> 
-                                                <div class="text-slate-500 mt-1">HTML, PHP, Mysql</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-32 -ml-2 sm:ml-0 mt-5 mr-auto sm:mr-5">
-                                                    <div class="h-[30px]">
-                                                        <canvas class="simple-line-chart-1" data-random="true" width="96" height="30" style="display: block; box-sizing: border-box; height: 30px; width: 96px;"></canvas>
-                                                    </div>
-                                                </div>
-                                                <div class="text-center">
-                                                    <div class="font-medium">3.4k</div>
-                                                    <div class="bg-primary/10 text-primary rounded px-2 mt-1.5">+150</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END: Top Categories -->
-                                <!-- BEGIN: Work In Progress -->
-                                <div class="intro-y box col-span-12 lg:col-span-6">
-                                    <div class="flex items-center px-5 py-5 sm:py-0 border-b border-slate-200/60 dark:border-darkmode-400">
-                                        <h2 class="font-medium text-base mr-auto">
-                                            Work In Progress
-                                        </h2>
-                                        <div class="dropdown ml-auto sm:hidden">
-                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;" aria-expanded="false" data-tw-toggle="dropdown"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="more-horizontal" data-lucide="more-horizontal" class="lucide lucide-more-horizontal w-5 h-5 text-slate-500"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg> </a>
-                                            <div class="nav nav-tabs dropdown-menu w-40" role="tablist">
-                                                <ul class="dropdown-content">
-                                                    <li> <a id="work-in-progress-mobile-new-tab" href="javascript:;" data-tw-toggle="tab" data-tw-target="#work-in-progress-new" class="dropdown-item" role="tab" aria-controls="work-in-progress-new" aria-selected="true">New</a> </li>
-                                                    <li> <a id="work-in-progress-mobile-last-week-tab" href="javascript:;" data-tw-toggle="tab" data-tw-target="#work-in-progress-last-week" class="dropdown-item" role="tab" aria-selected="false">Last Week</a> </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <ul class="nav nav-link-tabs w-auto ml-auto hidden sm:flex" role="tablist">
-                                            <li id="work-in-progress-new-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-5 active" data-tw-target="#work-in-progress-new" aria-controls="work-in-progress-new" aria-selected="true" role="tab"> New </a> </li>
-                                            <li id="work-in-progress-last-week-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-5" data-tw-target="#work-in-progress-last-week" aria-selected="false" role="tab"> Last Week </a> </li>
-                                        </ul>
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="tab-content">
-                                            <div id="work-in-progress-new" class="tab-pane active" role="tabpanel" aria-labelledby="work-in-progress-new-tab">
-                                                <div>
-                                                    <div class="flex">
-                                                        <div class="mr-auto">Pending Tasks</div>
-                                                        <div>20%</div>
-                                                    </div>
-                                                    <div class="progress h-1 mt-2">
-                                                        <div class="progress-bar w-1/2 bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-5">
-                                                    <div class="flex">
-                                                        <div class="mr-auto">Completed Tasks</div>
-                                                        <div>2 / 20</div>
-                                                    </div>
-                                                    <div class="progress h-1 mt-2">
-                                                        <div class="progress-bar w-1/4 bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-5">
-                                                    <div class="flex">
-                                                        <div class="mr-auto">Tasks In Progress</div>
-                                                        <div>42</div>
-                                                    </div>
-                                                    <div class="progress h-1 mt-2">
-                                                        <div class="progress-bar w-3/4 bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                                <a href="" class="btn btn-secondary block w-40 mx-auto mt-5">View More Details</a> 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END: Work In Progress -->
-                                <!-- BEGIN: Daily Sales -->
-                                <div class="intro-y box col-span-12 lg:col-span-6">
-                                    <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
-                                        <h2 class="font-medium text-base mr-auto">
-                                            Daily Sales
-                                        </h2>
-                                        <div class="dropdown ml-auto sm:hidden">
-                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;" aria-expanded="false" data-tw-toggle="dropdown"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="more-horizontal" data-lucide="more-horizontal" class="lucide lucide-more-horizontal w-5 h-5 text-slate-500"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg> </a>
-                                            <div class="dropdown-menu w-40">
-                                                <ul class="dropdown-content">
-                                                    <li>
-                                                        <a href="javascript:;" class="dropdown-item"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="file" data-lucide="file" class="lucide lucide-file w-4 h-4 mr-2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Download Excel </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-outline-secondary hidden sm:flex"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="file" data-lucide="file" class="lucide lucide-file w-4 h-4 mr-2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Download Excel </button>
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="relative flex items-center">
-                                            <div class="w-12 h-12 flex-none image-fit">
-                                                <img alt="Midone - HTML Admin Template" class="rounded-full" src="dist/images/profile-11.jpg">
-                                            </div>
-                                            <div class="ml-4 mr-auto">
-                                                <a href="" class="font-medium">Angelina Jolie</a> 
-                                                <div class="text-slate-500 mr-5 sm:mr-5">Bootstrap 4 HTML Admin Template</div>
-                                            </div>
-                                            <div class="font-medium text-slate-600 dark:text-slate-500">+$19</div>
-                                        </div>
-                                        <div class="relative flex items-center mt-5">
-                                            <div class="w-12 h-12 flex-none image-fit">
-                                                <img alt="Midone - HTML Admin Template" class="rounded-full" src="dist/images/profile-8.jpg">
-                                            </div>
-                                            <div class="ml-4 mr-auto">
-                                                <a href="" class="font-medium">Russell Crowe</a> 
-                                                <div class="text-slate-500 mr-5 sm:mr-5">Tailwind HTML Admin Template</div>
-                                            </div>
-                                            <div class="font-medium text-slate-600 dark:text-slate-500">+$25</div>
-                                        </div>
-                                        <div class="relative flex items-center mt-5">
-                                            <div class="w-12 h-12 flex-none image-fit">
-                                                <img alt="Midone - HTML Admin Template" class="rounded-full" src="dist/images/profile-12.jpg">
-                                            </div>
-                                            <div class="ml-4 mr-auto">
-                                                <a href="" class="font-medium">Al Pacino</a> 
-                                                <div class="text-slate-500 mr-5 sm:mr-5">Vuejs HTML Admin Template</div>
-                                            </div>
-                                            <div class="font-medium text-slate-600 dark:text-slate-500">+$21</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END: Daily Sales -->
-                                <!-- BEGIN: Latest Tasks -->
-                                <div class="intro-y box col-span-12 lg:col-span-6">
-                                    <div class="flex items-center px-5 py-5 sm:py-0 border-b border-slate-200/60 dark:border-darkmode-400">
-                                        <h2 class="font-medium text-base mr-auto">
-                                            Latest Tasks
-                                        </h2>
-                                        <div class="dropdown ml-auto sm:hidden">
-                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;" aria-expanded="false" data-tw-toggle="dropdown"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="more-horizontal" data-lucide="more-horizontal" class="lucide lucide-more-horizontal w-5 h-5 text-slate-500"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg> </a>
-                                            <div class="nav nav-tabs dropdown-menu w-40" role="tablist">
-                                                <ul class="dropdown-content">
-                                                    <li> <a id="latest-tasks-mobile-new-tab" href="javascript:;" data-tw-toggle="tab" data-tw-target="#latest-tasks-new" class="dropdown-item" role="tab" aria-controls="latest-tasks-new" aria-selected="true">New</a> </li>
-                                                    <li> <a id="latest-tasks-mobile-last-week-tab" href="javascript:;" data-tw-toggle="tab" data-tw-target="#latest-tasks-last-week" class="dropdown-item" role="tab" aria-selected="false">Last Week</a> </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <ul class="nav nav-link-tabs w-auto ml-auto hidden sm:flex" role="tablist">
-                                            <li id="latest-tasks-new-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-5 active" data-tw-target="#latest-tasks-new" aria-controls="latest-tasks-new" aria-selected="true" role="tab"> New </a> </li>
-                                            <li id="latest-tasks-last-week-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link py-5" data-tw-target="#latest-tasks-last-week" aria-selected="false" role="tab"> Last Week </a> </li>
-                                        </ul>
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="tab-content">
-                                            <div id="latest-tasks-new" class="tab-pane active" role="tabpanel" aria-labelledby="latest-tasks-new-tab">
-                                                <div class="flex items-center">
-                                                    <div class="border-l-2 border-primary dark:border-primary pl-4">
-                                                        <a href="" class="font-medium">Create New Campaign</a> 
-                                                        <div class="text-slate-500">10:00 AM</div>
-                                                    </div>
-                                                    <div class="form-check form-switch ml-auto">
-                                                        <input class="form-check-input" type="checkbox">
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center mt-5">
-                                                    <div class="border-l-2 border-primary dark:border-primary pl-4">
-                                                        <a href="" class="font-medium">Meeting With Client</a> 
-                                                        <div class="text-slate-500">02:00 PM</div>
-                                                    </div>
-                                                    <div class="form-check form-switch ml-auto">
-                                                        <input class="form-check-input" type="checkbox">
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center mt-5">
-                                                    <div class="border-l-2 border-primary dark:border-primary pl-4">
-                                                        <a href="" class="font-medium">Create New Repository</a> 
-                                                        <div class="text-slate-500">04:00 PM</div>
-                                                    </div>
-                                                    <div class="form-check form-switch ml-auto">
-                                                        <input class="form-check-input" type="checkbox">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END: Latest Tasks -->
-                                <!-- BEGIN: General Statistic -->
-                                <div class="intro-y box col-span-12">
-                                    <div class="flex items-center px-5 py-5 sm:py-3 border-b border-slate-200/60 dark:border-darkmode-400">
-                                        <h2 class="font-medium text-base mr-auto">
-                                            General Statistics
-                                        </h2>
-                                        <div class="dropdown ml-auto sm:hidden">
-                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;" aria-expanded="false" data-tw-toggle="dropdown"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="more-horizontal" data-lucide="more-horizontal" class="lucide lucide-more-horizontal w-5 h-5 text-slate-500"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg> </a>
-                                            <div class="dropdown-menu w-40">
-                                                <ul class="dropdown-content">
-                                                    <li>
-                                                        <a href="javascript:;" class="dropdown-item"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="file" data-lucide="file" class="lucide lucide-file w-4 h-4 mr-2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Download XML </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-outline-secondary hidden sm:flex"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="file" data-lucide="file" class="lucide lucide-file w-4 h-4 mr-2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Download XML </button>
-                                    </div>
-                                    <div class="grid grid-cols-1 2xl:grid-cols-7 gap-6 p-5">
-                                        <div class="2xl:col-span-2">
-                                            <div class="grid grid-cols-2 gap-6">
-                                                <div class="col-span-2 sm:col-span-1 2xl:col-span-2 box dark:bg-darkmode-500 p-5">
-                                                    <div class="font-medium">Net Worth</div>
-                                                    <div class="flex items-center mt-1 sm:mt-0">
-                                                        <div class="mr-4 w-20 flex"> USP: <span class="ml-3 font-medium text-success">+23%</span> </div>
-                                                        <div class="w-5/6 overflow-auto">
-                                                            <div class="h-[51px]">
-                                                                <canvas class="simple-line-chart-1" data-random="true" width="308" height="51" style="display: block; box-sizing: border-box; height: 51px; width: 308px;"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-span-2 sm:col-span-1 2xl:col-span-2 box dark:bg-darkmode-500 p-5">
-                                                    <div class="font-medium">Sales</div>
-                                                    <div class="flex items-center mt-1 sm:mt-0">
-                                                        <div class="mr-4 w-20 flex"> USP: <span class="ml-3 font-medium text-danger">-5%</span> </div>
-                                                        <div class="w-5/6 overflow-auto">
-                                                            <div class="h-[51px]">
-                                                                <canvas class="simple-line-chart-1" data-random="true" width="308" height="51" style="display: block; box-sizing: border-box; height: 51px; width: 308px;"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-span-2 sm:col-span-1 2xl:col-span-2 box dark:bg-darkmode-500 p-5">
-                                                    <div class="font-medium">Profit</div>
-                                                    <div class="flex items-center mt-1 sm:mt-0">
-                                                        <div class="mr-4 w-20 flex"> USP: <span class="ml-3 font-medium text-danger">-10%</span> </div>
-                                                        <div class="w-5/6 overflow-auto">
-                                                            <div class="h-[51px]">
-                                                                <canvas class="simple-line-chart-1" data-random="true" width="308" height="51" style="display: block; box-sizing: border-box; height: 51px; width: 308px;"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-span-2 sm:col-span-1 2xl:col-span-2 box dark:bg-darkmode-500 p-5">
-                                                    <div class="font-medium">Products</div>
-                                                    <div class="flex items-center mt-1 sm:mt-0">
-                                                        <div class="mr-4 w-20 flex"> USP: <span class="ml-3 font-medium text-success">+55%</span> </div>
-                                                        <div class="w-5/6 overflow-auto">
-                                                            <div class="h-[51px]">
-                                                                <canvas class="simple-line-chart-1" data-random="true" width="308" height="51" style="display: block; box-sizing: border-box; height: 51px; width: 308px;"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="2xl:col-span-5 w-full">
-                                            <div class="flex justify-center mt-8">
-                                                <div class="flex items-center mr-5">
-                                                    <div class="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                                                    <span>Product Profit</span> 
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <div class="w-2 h-2 bg-slate-300 rounded-full mr-3"></div>
-                                                    <span>Author Sales</span> 
-                                                </div>
-                                            </div>
-                                            <div class="mt-8">
-                                                <div class="h-[420px]">
-                                                    <canvas id="stacked-bar-chart-1" width="836" height="420" style="display: block; box-sizing: border-box; height: 420px; width: 836px;"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END: General Statistic -->
-                            </div>
+                </div>
+            </div>
+            <!-- END: User Information -->
+            
+            <!-- BEGIN: Account Statistics -->
+            <div class="intro-y box col-span-12 lg:col-span-6">
+                <div class="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                    <h2 class="font-medium text-base mr-auto">
+                        Account Statistics
+                    </h2>
+                </div>
+                <div class="p-5">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Account Status</span>
+                            <span class="px-2 py-1 rounded-full text-xs {{ auth()->user()->active ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger' }}">
+                                {{ auth()->user()->active ? 'Active' : 'Inactive' }}
+                            </span>
                         </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Email Verified</span>
+                            <span class="px-2 py-1 rounded-full text-xs {{ auth()->user()->email_verified_at ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning' }}">
+                                {{ auth()->user()->email_verified_at ? 'Verified' : 'Not Verified' }}
+                            </span>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- END: Account Statistics -->
+        </div>
+    </div>
+    
+    <div id="activities" class="tab-pane" role="tabpanel" aria-labelledby="activities-tab">
+        <div class="intro-y box">
+            <div class="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                <h2 class="font-medium text-base mr-auto">
+                    Change Password
+                </h2>
+            </div>
+            <div class="p-5">
+                <form id="change-password-form">
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-12">
+                            <label for="current_password" class="form-label">Current Password <span class="text-danger">*</span></label>
+                            <input id="current_password" type="password" class="form-control" placeholder="Enter current password" required>
+                            <div class="text-danger text-xs mt-1" id="current_password_error"></div>
+                        </div>
+                        <div class="col-span-12">
+                            <label for="new_password" class="form-label">New Password <span class="text-danger">*</span></label>
+                            <input id="new_password" type="password" class="form-control" placeholder="Enter new password" required>
+                            <div class="text-danger text-xs mt-1" id="new_password_error"></div>
+                        </div>
+                        <div class="col-span-12">
+                            <label for="confirm_password" class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                            <input id="confirm_password" type="password" class="form-control" placeholder="Confirm new password" required>
+                            <div class="text-danger text-xs mt-1" id="confirm_password_error"></div>
+                        </div>
+                        <div class="col-span-12">
+                            <button type="submit" class="btn btn-primary w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key w-4 h-4 mr-2">
+                                    <rect x="1" y="1" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                                    <line x1="7" y1="11" x2="11" y2="7"></line>
+                                    <line x1="11" y1="7" x2="16" y2="12"></line>
+                                    <line x1="13" y1="17" x2="8" y2="22"></line>
+                                    <line x1="2" y1="22" x2="7" y2="17"></line>
+                                </svg>
+                                Change Password
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN: Edit Profile Modal -->
+<div id="edit-profile-modal" class="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="font-medium text-base mr-auto">Edit Profile</h2>
+                <button class="btn btn-outline-secondary hidden sm:flex" data-tw-dismiss="modal">
+                    <i data-lucide="file" class="w-4 h-4 mr-2"></i> Close
+                </button>
+            </div>
+            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="col-span-12">
+                    <label for="edit_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                    <input id="edit_name" type="text" class="form-control" value="{{ auth()->user()->name }}" required>
+                    <div class="text-danger text-xs mt-1" id="edit_name_error"></div>
+                </div>
+                <div class="col-span-12">
+                    <label for="edit_email" class="form-label">Email <span class="text-danger">*</span></label>
+                    <input id="edit_email" type="email" class="form-control" value="{{ auth()->user()->email }}" required>
+                    <div class="text-danger text-xs mt-1" id="edit_email_error"></div>
+                </div>
+                <div class="col-span-12">
+                    <label for="edit_contact_number" class="form-label">Contact Number</label>
+                    <input id="edit_contact_number" type="text" class="form-control" value="{{ auth()->user()->contact_number }}" placeholder="Enter contact number">
+                    <div class="text-danger text-xs mt-1" id="edit_contact_number_error"></div>
+                </div>
+                <div class="col-span-12">
+                    <label for="edit_address" class="form-label">Address</label>
+                    <textarea id="edit_address" class="form-control" rows="3" placeholder="Enter address">{{ auth()->user()->address }}</textarea>
+                    <div class="text-danger text-xs mt-1" id="edit_address_error"></div>
+                </div>
+                <div class="col-span-12">
+                    <label for="edit_date_of_birth" class="form-label">Date of Birth</label>
+                    <input id="edit_date_of_birth" type="date" class="form-control" value="{{ auth()->user()->date_of_birth }}">
+                    <div class="text-danger text-xs mt-1" id="edit_date_of_birth_error"></div>
+                </div>
+                <div class="col-span-12">
+                    <label for="edit_gender" class="form-label">Gender</label>
+                    <select id="edit_gender" class="form-select">
+                        <option value="">Select gender</option>
+                        <option value="male" {{ auth()->user()->gender == 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ auth()->user()->gender == 'female' ? 'selected' : '' }}>Female</option>
+                        <option value="other" {{ auth()->user()->gender == 'other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                    <div class="text-danger text-xs mt-1" id="edit_gender_error"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-20 mr-1">Cancel</button>
+                <button type="button" class="btn btn-primary w-20" onclick="updateProfile()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Edit Profile Modal -->
+
+<!-- BEGIN: Photo Upload Confirmation Modal -->
+<div id="photo-upload-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body px-5 py-10">
+                <div class="text-center">
+                    <div class="w-24 h-24 mx-auto mb-4">
+                        <img id="photo-preview" class="w-full h-full object-cover rounded-lg" src="" alt="Photo Preview">
+                    </div>
+                    <p class="text-slate-600 mb-4">Are you sure you want to upload this photo as your profile picture?</p>
+                    <div class="text-sm text-slate-500">
+                        <p><strong>File:</strong> <span id="photo-filename"></span></p>
+                        <p><strong>Size:</strong> <span id="photo-filesize"></span></p>
+                    </div>
+                    <div class="flex justify-center space-x-2 mt-4">
+                        <button type="button" data-tw-dismiss="modal" class="btn btn-outline-secondary w-20">Cancel</button>
+                        <button type="button" class="btn btn-primary w-20" onclick="proceedWithPhotoUpload()">Upload</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!-- END: Photo Upload Confirmation Modal -->
+
+<!-- BEGIN: Notification Toasts -->
+<x-notification-toast 
+    id="success" 
+    type="success" 
+    title="Success!" 
+    message="Profile updated successfully" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="3000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="error" 
+    type="error" 
+    title="Error!" 
+    message="An error occurred while updating profile" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="5000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="edit_success" 
+    type="success" 
+    title="Success!" 
+    message="Profile updated successfully" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="3000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="password_success" 
+    type="success" 
+    title="Success!" 
+    message="Password changed successfully" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="3000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="password_error" 
+    type="error" 
+    title="Error!" 
+    message="An error occurred while changing password" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="5000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="validation_error" 
+    type="error" 
+    title="Validation Error!" 
+    message="Please check the form for errors" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="5000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="photo_success" 
+    type="success" 
+    title="Success!" 
+    message="Profile photo updated successfully" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="3000" 
+    position="right" 
+    gravity="top" 
+/>
+
+<x-notification-toast 
+    id="photo_error" 
+    type="error" 
+    title="Error!" 
+    message="An error occurred while uploading photo" 
+    :showButton="false" 
+    :autoHide="true" 
+    :duration="5000" 
+    position="right" 
+    gravity="top" 
+/>
+<!-- END: Notification Toasts -->
+
 @endsection
 
 @push('scripts')
