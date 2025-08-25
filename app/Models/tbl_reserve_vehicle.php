@@ -16,7 +16,7 @@ class tbl_reserve_vehicle extends Model
 
     protected $table = 'tbl_reserve_vehicle';
     protected $primaryKey = 'id';
-    protected $fillable = ['vehicle_id', 'user_id', 'requested_name', 'destination', 'longitude','latitude','driver','driver_user_id','start_datetime','end_datetime','reason','reservation_type_id','qrcode','status'];
+    protected $fillable = ['vehicle_id', 'user_id', 'requested_name', 'destination', 'longitude','latitude','driver','driver_user_id','start_datetime','end_datetime','reason','remarks','reservation_type_id','qrcode','status'];
 
     public function vehicle()
     {

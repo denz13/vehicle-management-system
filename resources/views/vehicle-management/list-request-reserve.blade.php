@@ -340,12 +340,27 @@
                 <div class="text-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-danger"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
                     <p class="text-lg font-medium mb-2">Decline Reservation #{{ $reservation->id }}?</p>
-                    <p class="text-slate-500">Are you sure you want to decline this vehicle reservation request?</p>
+                    <p class="text-slate-500 mb-4">Are you sure you want to decline this vehicle reservation request?</p>
+                    
+                    <!-- Remarks Input Field -->
+                    <div class="text-left">
+                        <label for="decline-remarks-{{ $reservation->id }}" class="form-label">Remarks <span class="text-danger">*</span></label>
+                        <textarea 
+                            id="decline-remarks-{{ $reservation->id }}" 
+                            class="form-control w-full" 
+                            rows="3" 
+                            placeholder="Please provide a reason for declining this reservation..."
+                            required
+                        ></textarea>
+                        <div class="text-danger text-sm mt-1" id="remarks-error-{{ $reservation->id }}" style="display: none;">
+                            Remarks are required to decline a reservation.
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary mr-2" data-tw-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="declineReservation({{ $reservation->id }})">Decline</button>
+                <button type="button" class="btn btn-danger" onclick="validateAndDeclineReservation({{ $reservation->id }})">Decline</button>
             </div>
         </div>
     </div>

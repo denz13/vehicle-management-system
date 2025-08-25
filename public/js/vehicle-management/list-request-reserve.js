@@ -162,6 +162,100 @@ window.showReservationDetails = showReservationDetails;
 window.updateReservationStatus = updateReservationStatus;
 window.showReservationStatistics = showReservationStatistics;
 
+// Function to show success modal
+function showSuccessModal(message) {
+    // Remove any existing success modal
+    const existingModal = document.getElementById('success-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create success modal HTML
+    const modalHTML = `
+        <div id="success-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body px-5 py-10">
+                        <div class="text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-success">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <div class="mb-5 text-lg font-medium">${message}</div>
+                            <button type="button" data-tw-dismiss="modal" class="btn btn-primary w-24" onclick="location.reload()">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show the modal
+    const modal = document.getElementById('success-modal');
+    const toggleButton = document.createElement('button');
+    toggleButton.setAttribute('data-tw-toggle', 'modal');
+    toggleButton.setAttribute('data-tw-target', '#success-modal');
+    toggleButton.style.display = 'none';
+    document.body.appendChild(toggleButton);
+    
+    // Trigger the modal
+    toggleButton.click();
+    
+    // Remove the temporary button
+    toggleButton.remove();
+}
+
+// Function to show error modal
+function showErrorModal(message) {
+    // Remove any existing error modal
+    const existingModal = document.getElementById('error-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create error modal HTML
+    const modalHTML = `
+        <div id="error-modal" class="modal" data-tw-backdrop="static" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body px-5 py-10">
+                        <div class="text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-danger">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <div class="mb-5 text-lg font-medium">Error</div>
+                            <div class="mb-5 text-slate-500">${message}</div>
+                            <button type="button" data-tw-dismiss="modal" class="btn btn-primary w-24">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show the modal
+    const modal = document.getElementById('error-modal');
+    const toggleButton = document.createElement('button');
+    toggleButton.setAttribute('data-tw-toggle', 'modal');
+    toggleButton.setAttribute('data-tw-target', '#error-modal');
+    toggleButton.style.display = 'none';
+    document.body.appendChild(toggleButton);
+    
+    // Trigger the modal
+    toggleButton.click();
+    
+    // Remove the temporary button
+    toggleButton.remove();
+}
+
 // Function to approve reservation
 function approveReservation(reservationId) {
     // Show loading state
@@ -181,28 +275,15 @@ function approveReservation(reservationId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Show success message
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Reservation has been approved successfully.',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
-                // Reload the page to show updated status
-                location.reload();
-            });
+            // Show success message using custom modal
+            showSuccessModal('Reservation has been approved successfully!');
         } else {
             throw new Error(data.message || 'Failed to approve reservation');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: error.message || 'Failed to approve reservation. Please try again.',
-        });
+        showErrorModal(error.message || 'Failed to approve reservation. Please try again.');
     })
     .finally(() => {
         // Reset button state
@@ -211,13 +292,40 @@ function approveReservation(reservationId) {
     });
 }
 
+// Function to validate remarks and decline reservation
+function validateAndDeclineReservation(reservationId) {
+    const remarksField = document.getElementById(`decline-remarks-${reservationId}`);
+    const remarksError = document.getElementById(`remarks-error-${reservationId}`);
+    const remarks = remarksField.value.trim();
+    
+    // Reset error display
+    remarksError.style.display = 'none';
+    remarksField.classList.remove('border-danger');
+    
+    // Validate remarks
+    if (!remarks) {
+        remarksError.style.display = 'block';
+        remarksField.classList.add('border-danger');
+        remarksField.focus();
+        return;
+    }
+    
+    // If validation passes, proceed with decline
+    declineReservation(reservationId, remarks);
+}
+
 // Function to decline reservation
-function declineReservation(reservationId) {
+function declineReservation(reservationId, remarks = null) {
     // Show loading state
     const declineBtn = event.target;
     const originalText = declineBtn.textContent;
     declineBtn.textContent = 'Processing...';
     declineBtn.disabled = true;
+    
+    // Prepare request data
+    const requestData = {
+        remarks: remarks
+    };
     
     // Make AJAX request to decline reservation
     fetch(`/vehicle-management/decline-reservation/${reservationId}`, {
@@ -226,32 +334,20 @@ function declineReservation(reservationId) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             'Content-Type': 'application/json',
         },
+        body: JSON.stringify(requestData)
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Show success message
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Reservation has been declined successfully.',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
-                // Reload the page to show updated status
-                location.reload();
-            });
+            // Show success message using custom modal
+            showSuccessModal('Reservation has been declined successfully!');
         } else {
             throw new Error(data.message || 'Failed to decline reservation');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: error.message || 'Failed to decline reservation. Please try again.',
-        });
+        showErrorModal(error.message || 'Failed to decline reservation. Please try again.');
     })
     .finally(() => {
         // Reset button state

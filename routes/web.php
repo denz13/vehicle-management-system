@@ -122,5 +122,9 @@ Route::middleware('auth')->group(function() {
     Route::get('list-request-reserve/{id}/edit', [ListRequestReserveController::class, 'edit'])->name('list-request-reserve.edit');
     Route::put('list-request-reserve/{id}', [ListRequestReserveController::class, 'update'])->name('list-request-reserve.update');
     Route::delete('list-request-reserve/{id}', [ListRequestReserveController::class, 'destroy'])->name('list-request-reserve.destroy');
+    
+    // Approve and decline reservations
+    Route::post('vehicle-management/approve-reservation/{id}', [ListRequestReserveController::class, 'approveReservation'])->name('list-request-reserve.approve');
+    Route::post('vehicle-management/decline-reservation/{id}', [ListRequestReserveController::class, 'declineReservation'])->name('list-request-reserve.decline');
 });
 

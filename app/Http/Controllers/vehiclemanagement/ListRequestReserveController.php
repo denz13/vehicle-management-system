@@ -109,4 +109,80 @@ class ListRequestReserveController extends Controller
             ], 500);
         }
     }
+
+    public function approveReservation($id)
+    {
+        try {
+            Log::info('Approve reservation called with ID: ' . $id);
+            
+            $reservation = tbl_reserve_vehicle::find($id);
+            if (!$reservation) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Reservation not found'
+                ], 404);
+            }
+            
+            // Update the status to approved
+            $reservation->status = 'approved';
+            $reservation->save();
+            
+            Log::info('Reservation approved successfully, ID: ' . $id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Reservation approved successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error approving reservation: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to approve reservation: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function declineReservation($id)
+    {
+        try {
+            Log::info('Decline reservation called with ID: ' . $id);
+            
+            $reservation = tbl_reserve_vehicle::find($id);
+            if (!$reservation) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Reservation not found'
+                ], 404);
+            }
+            
+            // Get remarks from request
+            $remarks = request()->input('remarks');
+            if (empty($remarks)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Remarks are required to decline a reservation'
+                ], 400);
+            }
+            
+            // Update the status to rejected and save remarks
+            $reservation->status = 'rejected';
+            $reservation->remarks = $remarks;
+            $reservation->save();
+            
+            Log::info('Reservation declined successfully, ID: ' . $id . ', Remarks: ' . $remarks);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Reservation declined successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error declining reservation: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to decline reservation: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
