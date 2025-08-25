@@ -37,5 +37,10 @@ class tbl_reserve_vehicle extends Model
     {
         return $this->hasMany(tbl_reserve_vehicle_passenger::class, 'reserve_vehicle_id');
     }
+    
+    public function driver()
+    {
+        return $this->belongsTo(User::class, 'driver_user_id');
+    }
         
 }
