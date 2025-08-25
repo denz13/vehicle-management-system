@@ -42,5 +42,10 @@ class tbl_reserve_vehicle extends Model
     {
         return $this->belongsTo(User::class, 'driver_user_id');
     }
+    
+    public function scanRecords()
+    {
+        return $this->hasMany(\App\Models\tbl_scan_qrcode_reservation::class, 'reserve_vehicle_id');
+    }
         
 }

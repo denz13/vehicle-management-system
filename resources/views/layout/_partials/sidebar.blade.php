@@ -106,17 +106,17 @@
         </li>
         <li>
             <a href="javascript:;" class="side-menu">
-                <div class="side-menu__icon"> <i data-lucide="shopping-bag"></i> </div>
+                <div class="side-menu__icon"> <i data-lucide="qr-code"></i> </div>
                 <div class="side-menu__title">
-                    E-Commerce 
+                    QR Code Management
                     <div class="side-menu__sub-icon "> <i data-lucide="chevron-down"></i> </div>
                 </div>
             </a>
             <ul class="">
                 <li>
-                    <a href="side-menu-light-categories.html" class="side-menu">
+                    <a href="{{ route('scan-qrcode') }}" class="side-menu">
                         <div class="side-menu__icon"> <i data-lucide="activity"></i> </div>
-                        <div class="side-menu__title"> Categories </div>
+                        <div class="side-menu__title"> Scan QR Code </div>
                     </a>
                 </li>
                 <li>
