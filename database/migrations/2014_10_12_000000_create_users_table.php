@@ -19,9 +19,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedBigInteger('department_id')->nullable();
+            $table->unsignedBigInteger('position_id')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->string('gender')->nullable();
             $table->string('photo')->nullable();
-            $table->string('gender');
-            $table->integer('active');
+            $table->string('contact_number')->nullable();
+            $table->text('address')->nullable();
+            $table->integer('active')->default(1);
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
